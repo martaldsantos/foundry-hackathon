@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 
 
 # Load environment
-env_path = Path(__file__).resolve().parent.parent.parent / ".env"
+env_path = Path(__file__).resolve().parent.parent.parent / "challenge-0-setup" / ".env"
 load_dotenv(env_path)
 
 PROJECT_CONNECTION_STRING = os.getenv("PROJECT_CONNECTION_STRING")

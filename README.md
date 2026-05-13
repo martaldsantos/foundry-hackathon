@@ -26,7 +26,7 @@ You'll build two agents:
 - **Python 3.10+** installed locally
 - **Azure CLI** (`az`) installed and logged in (`az login`)
 - A terminal (bash, PowerShell, or WSL)
-- ~15 minutes for infrastructure provisioning (run `infra/deploy.sh` first!)
+- ~15 minutes for infrastructure provisioning (run `challenge-0-setup/deploy.sh` first!)
 
 ## Choose Your Track
 
@@ -60,13 +60,10 @@ git clone https://github.com/martaldsantos/foundry-hackathon.git && cd foundry-h
 # 2. Install Python dependencies
 pip install -r requirements.txt
 
-# 3. Deploy infrastructure (takes ~15 min, APIM takes ~30 min)
-cd infra && bash deploy.sh
+# 3. Deploy infrastructure & auto-generate .env (takes ~15 min, APIM takes ~30 min)
+bash challenge-0-setup/deploy.sh
 
-# 4. Auto-populate your .env from deployed resources
-bash scripts/setup-env.sh -g foundry-hackathon-rg
-
-# 5. Start Challenge 0!
+# 4. Start Challenge 0!
 ```
 
 > **Using GitHub Codespaces?** Click **Code → Codespaces → New codespace** on the repo page. Dependencies install automatically via the devcontainer — skip steps 1-2 and start at step 3.

@@ -20,7 +20,7 @@ from dotenv import load_dotenv
 
 async def main():
     # Step 1: Load environment
-    env_path = os.path.join(os.path.dirname(__file__), "..", "..", ".env")
+    env_path = os.path.join(os.path.dirname(__file__), "..", ".env")
     load_dotenv(env_path)
 
     project_connection_string = os.getenv("PROJECT_CONNECTION_STRING")
@@ -28,7 +28,7 @@ async def main():
 
     if not project_connection_string:
         print("❌ PROJECT_CONNECTION_STRING not found in .env")
-        print("   Run 'cp infra/.env.template .env' and fill in the values from deploy.sh output")
+        print("   Run 'bash challenge-0-setup/deploy.sh' to provision resources and auto-generate .env")
         sys.exit(1)
 
     print("✅ Environment loaded successfully")

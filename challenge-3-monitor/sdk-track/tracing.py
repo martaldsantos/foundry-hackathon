@@ -18,7 +18,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # Load environment FIRST — tracing env vars must be set before SDK import
-env_path = Path(__file__).resolve().parent.parent.parent / ".env"
+env_path = Path(__file__).resolve().parent.parent.parent / "challenge-0-setup" / ".env"
 load_dotenv(env_path)
 
 # Verify tracing is enabled

@@ -17,12 +17,12 @@ This installs:
 
 ### Step 2: Configure Your Environment
 
-1. Copy the template:
+1. Run the deploy script (if you haven't already) — it auto-generates your `.env`:
    ```bash
-   cp infra/.env.template .env
+   bash challenge-0-setup/deploy.sh
    ```
 
-2. Fill in the values from `deploy.sh` output. At minimum you need:
+2. Verify the `.env` file exists at `challenge-0-setup/.env` with at minimum:
    - `PROJECT_CONNECTION_STRING` — Your Foundry project endpoint
    - `MODEL_DEPLOYMENT_NAME` — Should be `gpt-5.1`
 

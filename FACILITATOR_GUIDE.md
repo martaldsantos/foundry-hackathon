@@ -4,13 +4,13 @@
 
 ### One Week Before
 - [ ] Verify Azure subscription has sufficient quota for gpt-5.1 in swedencentral
-- [ ] Test `infra/deploy.sh` end-to-end in a clean subscription
+- [ ] Test `challenge-0-setup/deploy.sh` end-to-end in a clean subscription
 - [ ] Confirm model availability: `az cognitiveservices model list --location swedencentral --query "[?model.name=='gpt-5.1']"`
 - [ ] Ensure participants have Contributor role on the resource group (or subscription)
 - [ ] Pre-provision APIM if possible (Developer SKU takes ~30 min to deploy)
 
 ### Day Of
-- [ ] Have participants run `infra/deploy.sh` at the very start (APIM needs time)
+- [ ] Have participants run `challenge-0-setup/deploy.sh` at the very start (APIM needs time)
 - [ ] Verify WiFi/network can reach Azure endpoints
 - [ ] Have a pre-provisioned "fallback" environment ready if someone's deploy fails
 - [ ] Print or share this timing guide

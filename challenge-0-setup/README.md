@@ -12,17 +12,13 @@ By the end of this challenge, you will have:
 
 ## Before You Start
 
-Make sure you've already run `infra/deploy.sh` — if you haven't, do it now! APIM takes ~30 minutes to provision, so starting early is important.
+Make sure you've already run `deploy.sh` — if you haven't, do it now! APIM takes ~30 minutes to provision, so starting early is important.
 
 ```bash
-cd infra && bash deploy.sh
+bash challenge-0-setup/deploy.sh
 ```
 
-Then copy the output values into your `.env` file:
-```bash
-cp infra/.env.template .env
-# Edit .env with the values from deploy.sh output
-```
+This will provision all resources **and** automatically write your `.env` file to `challenge-0-setup/.env`.
 
 ## Choose Your Track
 
