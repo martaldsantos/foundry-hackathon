@@ -27,3 +27,6 @@ Thumbs.db
 
 # Azure
 .azure/
+
+# Workshop solutions
+challenge-*/sdk-track/solutions/

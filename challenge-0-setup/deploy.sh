@@ -3,7 +3,7 @@ set -euo pipefail
 
 # =============================================================================
 # Foundry Hackathon — Infrastructure Deployment Script
-# Provisions: AI Foundry (hub + project + model), Log Analytics, App Insights, APIM
+# Provisions: AI Foundry (hub + project + model), Log Analytics, App Insights
 # Region: swedencentral
 # =============================================================================
 
@@ -12,12 +12,9 @@ RESOURCE_GROUP="${RESOURCE_GROUP:-foundry-hackathon-rg}"
 LOCATION="${LOCATION:-swedencentral}"
 FOUNDRY_RESOURCE_NAME="${FOUNDRY_RESOURCE_NAME:-foundry-hack-$(openssl rand -hex 4)}"
 PROJECT_NAME="${PROJECT_NAME:-tire-factory-project}"
-MODEL_DEPLOYMENT_NAME="${MODEL_DEPLOYMENT_NAME:-gpt-5.1}"
+MODEL_DEPLOYMENT_NAME="${MODEL_DEPLOYMENT_NAME:-gpt-5.4}"
 LOG_ANALYTICS_NAME="${LOG_ANALYTICS_NAME:-foundry-hack-logs}"
 APP_INSIGHTS_NAME="${APP_INSIGHTS_NAME:-foundry-hack-insights}"
-APIM_NAME="${APIM_NAME:-foundry-hack-apim-$(openssl rand -hex 4)}"
-APIM_PUBLISHER_EMAIL="${APIM_PUBLISHER_EMAIL:-hackathon@contoso.com}"
-APIM_PUBLISHER_NAME="${APIM_PUBLISHER_NAME:-Hackathon Team}"
 
 echo "=============================================="
 echo "  Foundry Hackathon — Infrastructure Deploy"
@@ -28,7 +25,6 @@ echo "Location:          $LOCATION"
 echo "Foundry Resource:  $FOUNDRY_RESOURCE_NAME"
 echo "Project:           $PROJECT_NAME"
 echo "Model Deployment:  $MODEL_DEPLOYMENT_NAME"
-echo "APIM:              $APIM_NAME"
 echo ""
 
 # --- Resource Group ----------------------------------------------------------
@@ -36,20 +32,6 @@ echo ">>> Creating resource group..."
 az group create \
     --name "$RESOURCE_GROUP" \
     --location "$LOCATION" \
-    --output none
-
-# --- APIM (start early — takes ~30 min) -------------------------------------
-echo ">>> Creating API Management instance (Developer SKU, ~30 min provision time)..."
-echo "    This runs in the background. Check status with:"
-echo "    az apim show --name $APIM_NAME --resource-group $RESOURCE_GROUP --query provisioningState"
-az apim create \
-    --name "$APIM_NAME" \
-    --resource-group "$RESOURCE_GROUP" \
-    --location "$LOCATION" \
-    --publisher-name "$APIM_PUBLISHER_NAME" \
-    --publisher-email "$APIM_PUBLISHER_EMAIL" \
-    --sku-name Developer \
-    --no-wait \
     --output none
 
 # --- AI Foundry Hub ----------------------------------------------------------
@@ -72,13 +54,13 @@ az cognitiveservices account project create \
     --output none
 
 # --- Model Deployment --------------------------------------------------------
-echo ">>> Deploying gpt-5.1 model..."
+echo ">>> Deploying gpt-5.4 model..."
 az cognitiveservices account deployment create \
     --name "$FOUNDRY_RESOURCE_NAME" \
     --resource-group "$RESOURCE_GROUP" \
     --deployment-name "$MODEL_DEPLOYMENT_NAME" \
-    --model-name "gpt-5.1" \
-    --model-version "2026-02-04" \
+    --model-name "gpt-5.4" \
+    --model-version "2026-03-05" \
     --model-format OpenAI \
     --sku-capacity 10 \
     --sku-name GlobalStandard \
@@ -127,16 +109,14 @@ PROJECT_CONNECTION_STRING=$(az cognitiveservices account project show \
     --name "$FOUNDRY_RESOURCE_NAME" \
     --resource-group "$RESOURCE_GROUP" \
     --project-name "$PROJECT_NAME" \
-    --query "properties.endpoint" -o tsv)
+    --query "properties.endpoints.\"AI Foundry API\"" -o tsv)
 
 SUBSCRIPTION_ID=$(az account show --query id -o tsv)
 
-# --- APIM Gateway URL --------------------------------------------------------
-APIM_GATEWAY_URL="https://${APIM_NAME}.azure-api.net"
-
 # --- Write .env file ----------------------------------------------------------
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ENV_FILE="$SCRIPT_DIR/.env"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+ENV_FILE="$ROOT_DIR/.env"
 
 echo ">>> Writing .env file to: $ENV_FILE"
 
@@ -161,11 +141,6 @@ MODEL_DEPLOYMENT_NAME=$MODEL_DEPLOYMENT_NAME
 APPLICATIONINSIGHTS_CONNECTION_STRING=$APP_INSIGHTS_CONN_STRING
 APPINSIGHTS_INSTRUMENTATION_KEY=$APP_INSIGHTS_INSTRUMENTATION_KEY
 
-# API Management
-APIM_GATEWAY_URL=$APIM_GATEWAY_URL
-APIM_NAME=$APIM_NAME
-APIM_SUBSCRIPTION_KEY=
-
 # Tracing (set to true to enable GenAI tracing)
 AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true
 OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
@@ -177,11 +152,4 @@ echo "  ✅ DEPLOYMENT COMPLETE"
 echo "=============================================="
 echo ""
 echo "  .env file written to: $ENV_FILE"
-echo ""
-echo "⚠️  APIM is still provisioning (~30 min). Check status:"
-echo "    az apim show --name $APIM_NAME --resource-group $RESOURCE_GROUP --query provisioningState"
-echo ""
-echo "Once APIM is ready, run this to update your .env with the subscription key:"
-echo "    APIM_KEY=\$(az apim subscription list --resource-group $RESOURCE_GROUP --service-name $APIM_NAME --query \"[0].primaryKey\" -o tsv)"
-echo "    sed -i \"s|APIM_SUBSCRIPTION_KEY=|APIM_SUBSCRIPTION_KEY=\$APIM_KEY|\" $ENV_FILE"
 echo ""

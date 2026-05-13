@@ -7,10 +7,9 @@
 - [ ] Test `challenge-0-setup/deploy.sh` end-to-end in a clean subscription
 - [ ] Confirm model availability: `az cognitiveservices model list --location swedencentral --query "[?model.name=='gpt-5.1']"`
 - [ ] Ensure participants have Contributor role on the resource group (or subscription)
-- [ ] Pre-provision APIM if possible (Developer SKU takes ~30 min to deploy)
 
 ### Day Of
-- [ ] Have participants run `challenge-0-setup/deploy.sh` at the very start (APIM needs time)
+- [ ] Have participants run `challenge-0-setup/deploy.sh` at the very start
 - [ ] Verify WiFi/network can reach Azure endpoints
 - [ ] Have a pre-provisioned "fallback" environment ready if someone's deploy fails
 - [ ] Print or share this timing guide
@@ -21,9 +20,9 @@
 |------|-----------|----------|
 | 0:00 – 0:20 | **Challenge 0: Setup** | Deploy infra, verify auth, explore Foundry portal |
 | 0:20 – 1:10 | **Challenge 1: Build** | Create both agents, test with sensor data |
-| 1:10 – 1:40 | **Challenge 2: Deploy** | Version agents, configure APIM gateway |
-| 1:40 – 2:30 | **Challenge 3: Monitor** | Enable tracing, explore App Insights, KQL queries |
-| 2:30 – 3:00 | **Challenge 4: Evaluate** | Run evaluations, interpret metrics, wrap up |
+| 1:10 – 1:40 | **Challenge 2: Monitor** | Enable GenAI tracing, explore App Insights |
+| 1:40 – 2:10 | **Challenge 3: Evaluate** | Run evaluations, interpret quality metrics |
+| 2:10 – 2:40 | **Challenge 4: Workflow** | Wire agents into an automated factory health pipeline |
 
 ### Buffer Time
 - Build in 5 min buffer between challenges for reconvene/Q&A
@@ -36,19 +35,19 @@
 - Bridge: "Portal users — you saw the playground. SDK users — you just talked to the same endpoint programmatically. Both paths lead to the same infrastructure."
 
 ### After Challenge 1 → Before Challenge 2
-- "You now have two agents that can reason about sensor data. But they're only accessible from your local machine."
-- Bridge: "Next we'll version them (so we can roll back if needed) and expose them through API Management — this is how production apps actually consume AI."
+- "You now have two agents that can reason about sensor data. But in production, you need visibility into what they're actually doing."
+- Bridge: "Challenge 2 is about observability — enabling tracing so every agent interaction is captured in Application Insights. You'll see token usage, latency, and the full tool call chain."
 
 ### After Challenge 2 → Before Challenge 3
-- "Your agents are now accessible via a managed gateway with rate limiting and auth policies."
-- Bridge: "But how do we know if they're working well in production? That's where monitoring comes in. Challenge 3 is about observability — understanding what your agents are doing and how they're performing."
-
-### After Challenge 3 → Before Challenge 4
 - "You can now see every agent interaction as a trace in App Insights. You know latency, token usage, and can query historical data."
 - Bridge: "Seeing traces tells you what happened. Evaluation tells you if the answers were actually good. Let's systematically test quality."
 
-### Wrap-Up After Challenge 4
-- Recap the full lifecycle: Build → Deploy → Monitor → Evaluate
+### After Challenge 3 → Before Challenge 4
+- "You've tested your agents systematically — you know how they score on quality metrics."
+- Bridge: "Now let's put them to work together. Challenge 4 builds a multi-agent orchestration workflow: the Anomaly Detection Agent scans all machines, and for each anomaly found the Fault Diagnosis Agent diagnoses the root cause — producing a full Factory Health Report. The agents persist as production assets; the workflow is your automation layer on top."
+
+### Wrap-Up After Challenge 4 (Workflow)
+- Recap the full lifecycle: Build → Monitor → Evaluate → Deploy
 - Highlight that portal and SDK both accessed the same underlying platform
 - Mention next steps: custom evaluators, multi-agent orchestration, CI/CD integration
 
@@ -68,7 +67,7 @@
 |-------|-------|-----|
 | `InsufficientQuota` | Not enough TPM for gpt-5.1 | Reduce `--sku-capacity` in deploy.sh or request quota increase |
 | `ModelNotFound` | Model not available in region | Check `az cognitiveservices model list --location swedencentral` |
-| `ResourceNotFound` after deploy | Resources still provisioning | Wait 2-3 min, APIM can take up to 30 min |
+| `ResourceNotFound` after deploy | Resources still provisioning | Wait 2-3 min and retry |
 
 ### SDK Issues
 
@@ -78,17 +77,9 @@
 | `AttributeError: 'AIProjectClient' has no attribute 'agents'` | Using SDK v1 patterns | Ensure `azure-ai-projects>=2.0.0` installed |
 | Async errors in Jupyter | Event loop conflict | Use `nest_asyncio` or run from terminal instead |
 
-### APIM Issues
-
-| Error | Cause | Fix |
-|-------|-------|-----|
-| APIM still "Activating" | Developer SKU takes ~30 min | Wait, check status in portal |
-| 401 from APIM gateway | Missing subscription key | Add `Ocp-Apim-Subscription-Key` header |
-| 403 from APIM to Foundry | Managed identity not configured | Assign `Cognitive Services User` role to APIM identity |
-
 ## Tips for Success
 
-1. **Start deploy.sh immediately** — Don't wait for the overview talk to finish. APIM provisioning is the bottleneck.
+1. **Start deploy.sh immediately** — Don't wait for the overview talk to finish. Deploy takes a few minutes and participants can explore the portal while it runs.
 2. **Have a buddy system** — Pair portal-track and SDK-track participants together so they can compare approaches.
 3. **Keep the sensor_data.json visible** — Project it on screen or share the link. Participants reference it constantly in Challenge 1.
 4. **Don't skip the reconvene** — The 5-min bridges between challenges are where concepts click. They connect the "how" to the "why."

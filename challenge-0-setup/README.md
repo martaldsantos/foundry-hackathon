@@ -4,7 +4,7 @@
 
 By the end of this challenge, you will have:
 - ✅ A fully provisioned Azure AI Foundry project with a deployed model
-- ✅ Application Insights and API Management resources provisioned
+- ✅ Application Insights provisioned and connection string available
 - ✅ Verified authentication from your local machine to Foundry
 - ✅ Confirmed your agent endpoint is working
 
@@ -12,13 +12,13 @@ By the end of this challenge, you will have:
 
 ## Before You Start
 
-Make sure you've already run `deploy.sh` — if you haven't, do it now! APIM takes ~30 minutes to provision, so starting early is important.
+Make sure you've already run `deploy.sh` — if you haven't, do it now!
 
 ```bash
 bash challenge-0-setup/deploy.sh
 ```
 
-This will provision all resources **and** automatically write your `.env` file to `challenge-0-setup/.env`.
+This will provision all resources **and** automatically write your `.env` file to the repository root as `.env`.
 
 ## Choose Your Track
 

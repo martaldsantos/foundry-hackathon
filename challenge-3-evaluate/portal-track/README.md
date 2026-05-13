@@ -120,4 +120,4 @@ traces
 
 ## ✅ Done!
 
-You can now observe your agents in production. Move on to [Challenge 4: Evaluate](../../challenge-4-evaluate/).
+You can now observe your agents in production. Move on to [Challenge 4: Workflow](../../challenge-4-deploy/).

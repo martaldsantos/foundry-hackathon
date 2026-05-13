@@ -22,7 +22,7 @@ This installs:
    bash challenge-0-setup/deploy.sh
    ```
 
-2. Verify the `.env` file exists at `challenge-0-setup/.env` with at minimum:
+2. Verify the `.env` file exists at the repository root (`.env`) with at minimum:
    - `PROJECT_CONNECTION_STRING` — Your Foundry project endpoint
    - `MODEL_DEPLOYMENT_NAME` — Should be `gpt-5.1`
 

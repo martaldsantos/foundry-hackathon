@@ -116,4 +116,4 @@
 
 ## ✅ Done!
 
-Both agents are created and working. Move on to [Challenge 2: Deploy & Expose](../../challenge-2-deploy/).
+Both agents are created and working. Move on to [Challenge 2: Monitor](../../challenge-2-monitor/).

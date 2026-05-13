@@ -11,7 +11,7 @@
             "version": "lts"
         }
     },
-    "postCreateCommand": "pip3 install --upgrade pip && pip3 install --user -r requirements.txt",
+    "postCreateCommand": "az config set extension.dynamic_install_allow_preview=true && pip3 install --upgrade pip && pip3 install --user -r requirements.txt",
     "customizations": {
         "vscode": {
             "extensions": [

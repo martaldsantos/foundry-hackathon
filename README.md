@@ -45,11 +45,11 @@ You can mix tracks across challenges — they cover the same concepts.
 |---|-----------|----------|----------------|
 | 0 | [Setup](./challenge-0-setup/) | 20 min | Provision resources, verify auth |
 | 1 | [Build Agents](./challenge-1-build/) | 50 min | Create anomaly detection & fault diagnosis agents |
-| 2 | [Deploy & Expose](./challenge-2-deploy/) | 30 min | Version agents, expose via API Management |
-| 3 | [Monitor](./challenge-3-monitor/) | 50 min | Enable tracing, explore App Insights |
-| 4 | [Evaluate](./challenge-4-evaluate/) | 30 min | Run evaluations, interpret quality metrics |
+| 2 | [Monitor](./challenge-2-monitor/) | 30 min | Enable tracing, explore App Insights |
+| 3 | [Evaluate](./challenge-3-evaluate/) | 30 min | Run evaluations, interpret quality metrics |
+| 4 | [Workflow](./challenge-4-deploy/) | 30 min | Build a multi-agent workflow: anomaly scan → fault diagnosis → factory health report |
 
-**Total time: ~3 hours**
+**Total time: ~2.5 hours**
 
 ## Quick Start
 
@@ -60,34 +60,37 @@ git clone https://github.com/martaldsantos/foundry-hackathon.git && cd foundry-h
 # 2. Install Python dependencies
 pip install -r requirements.txt
 
-# 3. Deploy infrastructure & auto-generate .env (takes ~15 min, APIM takes ~30 min)
+# 3. Login to Azure
+az login
+
+# 4. Deploy infrastructure & auto-generate .env (~5 min)
 bash challenge-0-setup/deploy.sh
 
-# 4. Start Challenge 0!
+# 5. Start Challenge 0!
 ```
 
-> **Using GitHub Codespaces?** Click **Code → Codespaces → New codespace** on the repo page. Dependencies install automatically via the devcontainer — skip steps 1-2 and start at step 3.
+> **Using GitHub Codespaces?** Click **Code → Codespaces → New codespace** on the repo page. Dependencies install automatically via the devcontainer — skip steps 1-2 and start at step 3 (az login).
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                  Microsoft Foundry                    │
-│  ┌─────────────────┐    ┌─────────────────────────┐ │
-│  │ Anomaly Agent   │    │ Fault Diagnosis Agent   │ │
-│  │ (gpt-5.1)       │    │ (gpt-5.1)              │ │
-│  └────────┬────────┘    └────────────┬────────────┘ │
-│           │                          │               │
-│           └──────────┬───────────────┘               │
-│                      │                               │
-├──────────────────────┼───────────────────────────────┤
-│            Application Insights                       │
-│            (traces, latency, errors)                 │
-└──────────────────────┼───────────────────────────────┘
+┌──────────────────────────────────────────────────────┐
+│                  Azure AI Foundry                     │
+│  ┌──────────────────┐    ┌──────────────────────────┐│
+│  │ Anomaly Agent    │    │ Fault Diagnosis Agent    ││
+│  │ (persistent v1)  │    │ (persistent v1)          ││
+│  └────────┬─────────┘    └───────────┬──────────────┘│
+│           │                          │                │
+│           └──────────┬───────────────┘                │
+│                      │                                │
+├──────────────────────┼────────────────────────────────┤
+│         Application Insights                          │
+│         (GenAI traces, latency, token usage)          │
+└──────────────────────┼────────────────────────────────┘
                        │
               ┌────────┴────────┐
-              │  API Management  │
-              │  (gateway layer) │
+              │ Python SDK /    │
+              │ Any Client      │
               └─────────────────┘
 ```
 
@@ -95,4 +98,3 @@ bash challenge-0-setup/deploy.sh
 
 - [Azure AI Foundry Documentation](https://learn.microsoft.com/azure/ai-studio/)
 - [azure-ai-projects SDK Reference](https://learn.microsoft.com/python/api/azure-ai-projects/)
-- [Azure API Management AI Gateway](https://learn.microsoft.com/azure/api-management/ai-gateway-overview)

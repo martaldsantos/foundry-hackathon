@@ -16,11 +16,13 @@ import os
 import sys
 
 from dotenv import load_dotenv
+from azure.ai.agents.aio import AgentsClient
+from azure.identity.aio import DefaultAzureCredential
 
 
 async def main():
     # Step 1: Load environment
-    env_path = os.path.join(os.path.dirname(__file__), "..", ".env")
+    env_path = os.path.join(os.path.dirname(__file__), "..", "..", ".env")
     load_dotenv(env_path)
 
     project_connection_string = os.getenv("PROJECT_CONNECTION_STRING")
@@ -34,22 +36,18 @@ async def main():
     print("✅ Environment loaded successfully")
 
     # Step 2: Authenticate
-    from azure.identity.aio import DefaultAzureCredential
-
     credential = DefaultAzureCredential()
     print("✅ Authenticated to Azure")
 
-    # Step 3: Connect to Foundry
-    from azure.ai.projects.aio import AIProjectClient
-
-    project_client = AIProjectClient(
+    # Step 3: Connect to Foundry project endpoint
+    agents_client = AgentsClient(
         endpoint=project_connection_string,
         credential=credential,
     )
     print("✅ Connected to Foundry project")
 
     # Step 4: Create a test agent
-    agent = await project_client.agents.create_agent(
+    agent = await agents_client.create_agent(
         model=model_deployment_name,
         name="setup-verification-agent",
         instructions="You are a helpful assistant. Respond briefly to confirm you are working.",
@@ -57,41 +55,41 @@ async def main():
     print(f"✅ Created test agent: {agent.id}")
 
     # Step 5: Create a thread and send a message
-    thread = await project_client.agents.create_thread()
-    await project_client.agents.create_message(
+    thread = await agents_client.threads.create()
+    await agents_client.messages.create(
         thread_id=thread.id,
         role="user",
         content="Say 'Hello! I'm working correctly.' and nothing else.",
     )
 
     # Step 6: Run the agent and get response
-    run = await project_client.agents.create_and_process_run(
+    run = await agents_client.runs.create_and_process(
         thread_id=thread.id,
         agent_id=agent.id,
     )
 
     if run.status == "failed":
         print(f"❌ Agent run failed: {run.last_error}")
-        await project_client.agents.delete_agent(agent.id)
+        await agents_client.delete_agent(agent.id)
         await credential.close()
-        await project_client.close()
+        await agents_client.close()
         sys.exit(1)
 
-    messages = await project_client.agents.list_messages(thread_id=thread.id)
     assistant_message = None
-    for msg in messages.data:
-        if msg.role == "assistant":
-            assistant_message = msg.content[0].text.value
+    messages = agents_client.messages.list(thread_id=thread.id)
+    async for msg in messages:
+        if msg.role == "assistant" and getattr(msg, "text_messages", None):
+            assistant_message = msg.text_messages[-1].text.value
             break
 
     print(f"✅ Agent response: \"{assistant_message}\"")
 
     # Step 7: Cleanup
-    await project_client.agents.delete_agent(agent.id)
+    await agents_client.delete_agent(agent.id)
     print("✅ Cleaned up test agent")
 
     await credential.close()
-    await project_client.close()
+    await agents_client.close()
 
     print("\n🎉 Setup verified! You're ready for Challenge 1.")
 

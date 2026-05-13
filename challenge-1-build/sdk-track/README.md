@@ -4,11 +4,11 @@
 
 ### Overview
 
-You'll implement two agents in `agents.py`:
+You'll complete prompt engineering for two agents in `agents.py`:
 1. **AnomalyDetectionAgent** — Compares sensor readings against thresholds
 2. **FaultDiagnosisAgent** — Diagnoses root causes and recommends actions
 
-The file has stubs with TODOs. Your job is to fill them in.
+The SDK wiring is already implemented. Your job is to write the two system prompts.
 
 ### Step 1: Understand the Sensor Data
 
@@ -17,24 +17,17 @@ Open `../sensor_data.json` and familiarize yourself with the structure:
 - Each reading has a threshold (min/max)
 - 2 machines are in "warning", 1 in "critical", 2 "normal"
 
-### Step 2: Fill in the TODOs
+### Step 2: Write the Two Prompts
 
-Open `agents.py` and complete:
+Open `agents.py` and complete only these TODOs:
 
-1. **`check_thresholds` function** — Already implemented as a tool function. Read through it to understand how it works.
-
-2. **`AnomalyDetectionAgent.create()`** — Fill in:
+1. **`AnomalyDetectionAgent.create()`** — Fill in:
    - The system prompt (instructions for how the agent should analyze sensor data)
-   - The tool definition that lets the agent call `check_thresholds`
 
-3. **`AnomalyDetectionAgent.run(input_text)`** — Fill in:
-   - Create a thread, add the user message, run the agent, return the response
-
-4. **`FaultDiagnosisAgent.create()`** — Fill in:
+2. **`FaultDiagnosisAgent.create()`** — Fill in:
    - The system prompt (instructions for fault diagnosis and recommendations)
 
-5. **`FaultDiagnosisAgent.run(input_text)`** — Fill in:
-   - Same pattern as AnomalyDetectionAgent
+Everything else (tool definitions, run flow, thread handling, cleanup) is pre-built.
 
 ### Step 3: Run and Test
 
@@ -54,7 +47,7 @@ The `main()` function at the bottom will:
 
 - The `check_thresholds` tool reads from `sensor_data.json` and returns which readings are out of spec
 - System prompts should be specific about output format
-- Don't forget to handle the tool call flow: when the agent wants to call a tool, you need to submit the tool output back
+- Keep prompt output structured so it's easy to pass anomaly output into diagnosis
 
 ### Expected Output
 
@@ -82,4 +75,4 @@ Diagnosis: [agent's analysis here]
 
 ## ✅ Done!
 
-Both agents are working via the SDK. Move on to [Challenge 2: Deploy & Expose](../../challenge-2-deploy/).
+Both agents are working via the SDK. Move on to [Challenge 2: Monitor](../../challenge-2-monitor/).

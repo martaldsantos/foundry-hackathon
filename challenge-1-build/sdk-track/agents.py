@@ -5,20 +5,23 @@ Anomaly Detection Agent and Fault Diagnosis Agent for TireForge Industries.
 Usage:
     python agents.py
 
-Fill in the TODOs to complete both agents.
+Only the system prompts are left as TODOs for the workshop exercise.
 """
 
-import asyncio
 import json
 import os
 import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import FunctionTool, PromptAgentDefinition
+from azure.identity import DefaultAzureCredential
+from openai.types.responses.response_input_param import FunctionCallOutput
 
 
 # Load environment
-env_path = Path(__file__).resolve().parent.parent.parent / "challenge-0-setup" / ".env"
+env_path = Path(__file__).resolve().parent.parent.parent / ".env"
 load_dotenv(env_path)
 
 PROJECT_CONNECTION_STRING = os.getenv("PROJECT_CONNECTION_STRING")
@@ -91,24 +94,23 @@ def check_thresholds(machine_id: str) -> str:
     return json.dumps(results, indent=2)
 
 
-# Tool definition for the agent (OpenAI function-calling format)
-CHECK_THRESHOLDS_TOOL = {
-    "type": "function",
-    "function": {
-        "name": "check_thresholds",
-        "description": "Check if a machine's sensor readings are within normal operating thresholds. Returns anomalies if any readings are out of spec.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "machine_id": {
-                    "type": "string",
-                    "description": "The machine ID (e.g., 'MX-001') or name (e.g., 'mixer') to check",
-                }
-            },
-            "required": ["machine_id"],
+# Tool definition for the agent (Foundry FunctionTool format)
+CHECK_THRESHOLDS_TOOL = FunctionTool(
+    name="check_thresholds",
+    description="Check if a machine's sensor readings are within normal operating thresholds. Returns anomalies if any readings are out of spec.",
+    parameters={
+        "type": "object",
+        "properties": {
+            "machine_id": {
+                "type": "string",
+                "description": "The machine ID (e.g., 'MX-001') or name (e.g., 'mixer') to check",
+            }
         },
+        "required": ["machine_id"],
+        "additionalProperties": False,
     },
-}
+    strict=False,
+)
 
 
 # =============================================================================
@@ -119,17 +121,15 @@ class AnomalyDetectionAgent:
     def __init__(self):
         self.agent = None
         self.client = None
+        self.openai = None
 
-    async def create(self):
+    def create(self):
         """Create the anomaly detection agent in Foundry."""
-        from azure.identity.aio import DefaultAzureCredential
-        from azure.ai.projects.aio import AIProjectClient
-
-        credential = DefaultAzureCredential()
         self.client = AIProjectClient(
             endpoint=PROJECT_CONNECTION_STRING,
-            credential=credential,
+            credential=DefaultAzureCredential(),
         )
+        self.openai = self.client.get_openai_client()
 
         # TODO: Define the system prompt for the anomaly detection agent.
         # The agent should:
@@ -142,33 +142,67 @@ class AnomalyDetectionAgent:
         # and what format to respond in.
         """
 
-        # TODO: Create the agent with the system prompt and the check_thresholds tool
-        # Use: self.client.agents.create_agent(...)
-        # Parameters needed: model, name, instructions, tools
-        self.agent = None  # TODO: Replace with actual create_agent call
+        self.agent = self.client.agents.create_version(
+            agent_name="anomaly-detection-agent",
+            definition=PromptAgentDefinition(
+                model=MODEL_DEPLOYMENT_NAME,
+                instructions=system_prompt,
+                tools=[CHECK_THRESHOLDS_TOOL],
+            ),
+        )
 
         return self.agent
 
-    async def run(self, input_text: str) -> str:
+    def run(self, input_text: str) -> str:
         """Run the anomaly detection agent with the given input."""
-        # TODO: Implement the agent run flow:
-        # 1. Create a thread: await self.client.agents.create_thread()
-        # 2. Add user message: await self.client.agents.create_message(thread_id=..., role="user", content=input_text)
-        # 3. Create and process run: await self.client.agents.create_and_process_run(thread_id=..., agent_id=self.agent.id)
-        #    NOTE: If the agent calls the check_thresholds tool, you need to handle it!
-        #    Use create_run + poll loop, or create_and_process_run with tool handling
-        # 4. Get messages: await self.client.agents.list_messages(thread_id=...)
-        # 5. Return the assistant's response text
+        conversation = self.openai.conversations.create()
 
-        # TODO: Replace this with your implementation
-        raise NotImplementedError("Fill in the run() method")
+        response = self.openai.responses.create(
+            input=input_text,
+            conversation=conversation.id,
+            extra_body={"agent_reference": {"name": self.agent.name, "type": "agent_reference"}},
+        )
 
-    async def cleanup(self):
-        """Delete the agent and close connections."""
+        # Handle function call loops
+        while True:
+            function_calls = [item for item in response.output if item.type == "function_call"]
+            if not function_calls:
+                break
+
+            input_list = []
+            for item in function_calls:
+                if item.name == "check_thresholds":
+                    args = json.loads(item.arguments)
+                    result = check_thresholds(args["machine_id"])
+                else:
+                    result = json.dumps({"error": f"Unknown tool '{item.name}'"})
+
+                input_list.append(
+                    FunctionCallOutput(
+                        type="function_call_output",
+                        call_id=item.call_id,
+                        output=result,
+                    )
+                )
+
+            response = self.openai.responses.create(
+                input=input_list,
+                conversation=conversation.id,
+                extra_body={"agent_reference": {"name": self.agent.name, "type": "agent_reference"}},
+            )
+
+        self.openai.conversations.delete(conversation_id=conversation.id)
+        return response.output_text
+
+    def cleanup(self):
+        """Delete the agent version and close connections."""
         if self.agent:
-            await self.client.agents.delete_agent(self.agent.id)
+            self.client.agents.delete_version(
+                agent_name=self.agent.name,
+                agent_version=self.agent.version,
+            )
         if self.client:
-            await self.client.close()
+            self.client.close()
 
 
 # =============================================================================
@@ -179,17 +213,15 @@ class FaultDiagnosisAgent:
     def __init__(self):
         self.agent = None
         self.client = None
+        self.openai = None
 
-    async def create(self):
+    def create(self):
         """Create the fault diagnosis agent in Foundry."""
-        from azure.identity.aio import DefaultAzureCredential
-        from azure.ai.projects.aio import AIProjectClient
-
-        credential = DefaultAzureCredential()
         self.client = AIProjectClient(
             endpoint=PROJECT_CONNECTION_STRING,
-            credential=credential,
+            credential=DefaultAzureCredential(),
         )
+        self.openai = self.client.get_openai_client()
 
         # TODO: Define the system prompt for the fault diagnosis agent.
         # The agent should:
@@ -203,37 +235,45 @@ class FaultDiagnosisAgent:
         # high vibration = bearing wear, etc.)
         """
 
-        # TODO: Create the agent with the system prompt
-        # This agent doesn't need the check_thresholds tool (it receives pre-analyzed data)
-        # Use: self.client.agents.create_agent(...)
-        self.agent = None  # TODO: Replace with actual create_agent call
+        self.agent = self.client.agents.create_version(
+            agent_name="fault-diagnosis-agent",
+            definition=PromptAgentDefinition(
+                model=MODEL_DEPLOYMENT_NAME,
+                instructions=system_prompt,
+            ),
+        )
 
         return self.agent
 
-    async def run(self, input_text: str) -> str:
+    def run(self, input_text: str) -> str:
         """Run the fault diagnosis agent with the given input."""
-        # TODO: Implement the agent run flow (same pattern as AnomalyDetectionAgent.run)
-        # 1. Create thread
-        # 2. Add message
-        # 3. Run agent
-        # 4. Get response
+        conversation = self.openai.conversations.create()
 
-        # TODO: Replace this with your implementation
-        raise NotImplementedError("Fill in the run() method")
+        response = self.openai.responses.create(
+            input=input_text,
+            conversation=conversation.id,
+            extra_body={"agent_reference": {"name": self.agent.name, "type": "agent_reference"}},
+        )
 
-    async def cleanup(self):
-        """Delete the agent and close connections."""
+        self.openai.conversations.delete(conversation_id=conversation.id)
+        return response.output_text
+
+    def cleanup(self):
+        """Delete the agent version and close connections."""
         if self.agent:
-            await self.client.agents.delete_agent(self.agent.id)
+            self.client.agents.delete_version(
+                agent_name=self.agent.name,
+                agent_version=self.agent.version,
+            )
         if self.client:
-            await self.client.close()
+            self.client.close()
 
 
 # =============================================================================
 # Main — Test both agents
 # =============================================================================
 
-async def main():
+def main():
     if not PROJECT_CONNECTION_STRING:
         print("❌ PROJECT_CONNECTION_STRING not set. Run challenge 0 first!")
         sys.exit(1)
@@ -242,11 +282,11 @@ async def main():
     print("Creating agent...")
 
     anomaly_agent = AnomalyDetectionAgent()
-    await anomaly_agent.create()
-    print(f"✅ Created: {anomaly_agent.agent.id}")
+    anomaly_agent.create()
+    print(f"✅ Created: {anomaly_agent.agent.name} (version {anomaly_agent.agent.version})")
 
     print("\nAnalyzing all machines...")
-    anomaly_result = await anomaly_agent.run(
+    anomaly_result = anomaly_agent.run(
         "Check all 5 machines (MX-001, EX-002, CP-003, CU-004, IS-005) "
         "and report which ones have anomalies. For each anomaly, state the "
         "sensor, its current value, the threshold it violates, and by how much."
@@ -257,11 +297,11 @@ async def main():
     print("Creating agent...")
 
     diagnosis_agent = FaultDiagnosisAgent()
-    await diagnosis_agent.create()
-    print(f"✅ Created: {diagnosis_agent.agent.id}")
+    diagnosis_agent.create()
+    print(f"✅ Created: {diagnosis_agent.agent.name} (version {diagnosis_agent.agent.version})")
 
     print("\nDiagnosing critical machine: curing_press...")
-    diagnosis_result = await diagnosis_agent.run(
+    diagnosis_result = diagnosis_agent.run(
         "The curing press (CP-003) has these anomalies:\n"
         "- Temperature: 198.5°C (max threshold: 180°C) — 10.3% over\n"
         "- Pressure: 18.2 bar (max threshold: 16.0 bar) — 13.8% over\n"
@@ -273,10 +313,10 @@ async def main():
 
     # Cleanup
     print("\nCleaning up agents...")
-    await anomaly_agent.cleanup()
-    await diagnosis_agent.cleanup()
+    anomaly_agent.cleanup()
+    diagnosis_agent.cleanup()
     print("✅ Done!")
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()

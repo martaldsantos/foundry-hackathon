@@ -1,4 +1,4 @@
-# Challenge 4: Evaluate
+# Challenge 3: Evaluate
 
 ## Objectives
 
@@ -14,11 +14,11 @@ By the end of this challenge, you will have:
 
 Monitoring tells you **what's happening** (latency, errors, token usage). Evaluation tells you **if the answers are actually good**.
 
-You have a dataset of 10 test cases — each with a sensor reading snapshot and the expected correct output (classification + recommended action). You'll run your agents against these test cases and measure how well they do.
+You have a dataset of 10 test cases — each with a sensor reading snapshot and the expected correct output (classification + recommended action). You'll run your agents against these test cases and measure how well they perform using LLM-as-judge scoring.
 
 ## The Evaluation Dataset
 
-Check [evaluation_dataset.json](./evaluation_dataset.json) — it contains:
+The dataset lives at [challenge-4-deploy/evaluation_dataset.json](../challenge-4-deploy/evaluation_dataset.json) — it contains:
 - 10 scenarios covering normal, warning, and critical machines
 - Each has an `input` (what you send to the agent)
 - Each has an `expected_output` (the correct classification and action)
