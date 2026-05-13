@@ -55,7 +55,7 @@ You can mix tracks across challenges — they cover the same concepts.
 
 ```bash
 # 1. Clone this repo
-git clone <repo-url> && cd foundry-hackathon
+git clone https://github.com/martaldsantos/foundry-hackathon.git && cd foundry-hackathon
 
 # 2. Install Python dependencies
 pip install -r requirements.txt
@@ -63,12 +63,13 @@ pip install -r requirements.txt
 # 3. Deploy infrastructure (takes ~15 min, APIM takes ~30 min)
 cd infra && bash deploy.sh
 
-# 4. Copy and fill your .env
-cp infra/.env.template .env
-# Fill in values from deploy.sh output
+# 4. Auto-populate your .env from deployed resources
+bash scripts/setup-env.sh -g foundry-hackathon-rg
 
 # 5. Start Challenge 0!
 ```
+
+> **Using GitHub Codespaces?** Click **Code → Codespaces → New codespace** on the repo page. Dependencies install automatically via the devcontainer — skip steps 1-2 and start at step 3.
 
 ## Architecture
 
