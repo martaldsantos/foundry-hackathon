@@ -18,12 +18,16 @@ TireForge Industries has 5 machines on the production floor. Each machine emits 
 
 Check out [sensor_data.json](./sensor_data.json) to see the current state of all machines.
 
-## Choose Your Track
+## Get Started
 
-| Track | Go to |
-|-------|-------|
-| Portal Track | [portal-track/README.md](./portal-track/README.md) |
-| SDK Track | [sdk-track/README.md](./sdk-track/README.md) |
+Open [agents.py](./agents.py) and fill in the TODOs to build both agents.
+
+```bash
+cd challenge-1-build
+python agents.py
+```
+
+See [solutions/agents.py](./solutions/agents.py) if you get stuck.
 
 ## Success Criteria
 

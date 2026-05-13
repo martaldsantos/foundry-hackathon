@@ -20,13 +20,24 @@ from azure.identity import DefaultAzureCredential
 from openai.types.responses.response_input_param import FunctionCallOutput
 
 
+# Resolve repo root by finding .env in parent directories.
+def _find_repo_root() -> Path:
+    for parent in Path(__file__).resolve().parents:
+        if (parent / ".env").exists():
+            return parent
+    # Fallback for local edits before setup is run.
+    return Path(__file__).resolve().parents[2]
+
+
+REPO_ROOT = _find_repo_root()
+
 # Load environment
-env_path = Path(__file__).resolve().parent.parent.parent / ".env"
+env_path = REPO_ROOT / ".env"
 load_dotenv(env_path)
 
 PROJECT_CONNECTION_STRING = os.getenv("PROJECT_CONNECTION_STRING")
 MODEL_DEPLOYMENT_NAME = os.getenv("MODEL_DEPLOYMENT_NAME", "gpt-5.1")
-SENSOR_DATA_PATH = Path(__file__).resolve().parent.parent / "sensor_data.json"
+SENSOR_DATA_PATH = REPO_ROOT / "challenge-1-build" / "sensor_data.json"
 
 
 # =============================================================================
@@ -131,15 +142,16 @@ class AnomalyDetectionAgent:
         )
         self.openai = self.client.get_openai_client()
 
-        # TODO: Define the system prompt for the anomaly detection agent.
-        # The agent should:
-        # - Analyze sensor readings against thresholds
-        # - Classify status as normal/warning/critical
-        # - Provide structured output with each reading's status
         system_prompt = """
-        # TODO: Write your system prompt here
-        # Hint: Tell the agent its role, how to classify anomalies,
-        # and what format to respond in.
+        You are an industrial sensor anomaly detection expert for TireForge Industries.
+        When asked to check machines, use the check_thresholds tool for each machine.
+        For each machine, report:
+        - Machine name and ID
+        - Status (normal / warning / critical)
+        - Each sensor reading that is out of spec: current value, threshold violated, deviation
+        Use \u26a0\ufe0f for warning and \U0001f534 for critical anomalies.
+        If all readings are in spec, mark the machine as normal.
+        Be concise and structured.
         """
 
         self.agent = self.client.agents.create_version(
@@ -223,16 +235,20 @@ class FaultDiagnosisAgent:
         )
         self.openai = self.client.get_openai_client()
 
-        # TODO: Define the system prompt for the fault diagnosis agent.
-        # The agent should:
-        # - Analyze patterns in anomalous readings
-        # - Determine likely root causes
-        # - Recommend specific maintenance actions
-        # - Estimate urgency (immediate/24h/monitor)
         system_prompt = """
-        # TODO: Write your system prompt here
-        # Hint: Include common fault patterns (high temp + high pressure = blockage,
-        # high vibration = bearing wear, etc.)
+        You are a mechanical fault diagnosis expert for TireForge Industries.
+        Given a list of sensor anomalies from a machine, your job is to:
+        1. Identify the most likely root cause based on the pattern of anomalies:
+           - High temperature + high pressure → likely blockage or restricted flow
+           - High vibration alone → likely bearing wear, misalignment, or imbalance
+           - High temperature + high vibration → likely bearing failure or lubrication issue
+           - Multiple sensors critical → compound failure, escalate immediately
+        2. Recommend specific, actionable maintenance steps.
+        3. Estimate urgency: IMMEDIATE (stop now), WITHIN 24H, or MONITOR.
+        Be concise. Format your response as:
+        LIKELY CAUSE: ...
+        MAINTENANCE ACTIONS: ...
+        URGENCY: ...
         """
 
         self.agent = self.client.agents.create_version(
@@ -311,11 +327,11 @@ def main():
     )
     print(diagnosis_result)
 
-    # Cleanup
-    print("\nCleaning up agents...")
-    anomaly_agent.cleanup()
-    diagnosis_agent.cleanup()
-    print("✅ Done!")
+    # Cleanup — comment out to keep agents visible in the Foundry portal
+    # print("\nCleaning up agents...")
+    # anomaly_agent.cleanup()
+    # diagnosis_agent.cleanup()
+    # print("✅ Done!")
 
 
 if __name__ == "__main__":

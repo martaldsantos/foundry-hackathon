@@ -23,12 +23,16 @@ The dataset lives at [challenge-4-deploy/evaluation_dataset.json](../challenge-4
 - Each has an `input` (what you send to the agent)
 - Each has an `expected_output` (the correct classification and action)
 
-## Choose Your Track
+## Get Started
 
-| Track | Go to |
-|-------|-------|
-| Portal Track | [portal-track/README.md](./portal-track/README.md) |
-| SDK Track | [sdk-track/README.md](./sdk-track/README.md) |
+Open [evaluate.py](./evaluate.py) and fill in the TODOs to run evaluations.
+
+```bash
+cd challenge-3-evaluate
+python evaluate.py
+```
+
+See [solutions/evaluate.py](./solutions/evaluate.py) if you get stuck.
 
 ## Success Criteria
 

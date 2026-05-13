@@ -13,6 +13,8 @@ LOCATION="${LOCATION:-swedencentral}"
 FOUNDRY_RESOURCE_NAME="${FOUNDRY_RESOURCE_NAME:-foundry-hack-$(openssl rand -hex 4)}"
 PROJECT_NAME="${PROJECT_NAME:-tire-factory-project}"
 MODEL_DEPLOYMENT_NAME="${MODEL_DEPLOYMENT_NAME:-gpt-5.4}"
+MODEL_NAME="${MODEL_NAME:-gpt-5.4}"
+MODEL_VERSION="${MODEL_VERSION:-2026-03-05}"
 LOG_ANALYTICS_NAME="${LOG_ANALYTICS_NAME:-foundry-hack-logs}"
 APP_INSIGHTS_NAME="${APP_INSIGHTS_NAME:-foundry-hack-insights}"
 
@@ -25,6 +27,8 @@ echo "Location:          $LOCATION"
 echo "Foundry Resource:  $FOUNDRY_RESOURCE_NAME"
 echo "Project:           $PROJECT_NAME"
 echo "Model Deployment:  $MODEL_DEPLOYMENT_NAME"
+echo "Model Name:        $MODEL_NAME"
+echo "Model Version:     $MODEL_VERSION"
 echo ""
 
 # --- Resource Group ----------------------------------------------------------
@@ -54,13 +58,13 @@ az cognitiveservices account project create \
     --output none
 
 # --- Model Deployment --------------------------------------------------------
-echo ">>> Deploying gpt-5.4 model..."
+echo ">>> Deploying model: $MODEL_NAME ($MODEL_VERSION)..."
 az cognitiveservices account deployment create \
     --name "$FOUNDRY_RESOURCE_NAME" \
     --resource-group "$RESOURCE_GROUP" \
     --deployment-name "$MODEL_DEPLOYMENT_NAME" \
-    --model-name "gpt-5.4" \
-    --model-version "2026-03-05" \
+    --model-name "$MODEL_NAME" \
+    --model-version "$MODEL_VERSION" \
     --model-format OpenAI \
     --sku-capacity 10 \
     --sku-name GlobalStandard \

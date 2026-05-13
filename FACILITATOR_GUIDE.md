@@ -80,7 +80,7 @@
 ## Tips for Success
 
 1. **Start deploy.sh immediately** — Don't wait for the overview talk to finish. Deploy takes a few minutes and participants can explore the portal while it runs.
-2. **Have a buddy system** — Pair portal-track and SDK-track participants together so they can compare approaches.
+2. **Encourage portal exploration** — In Challenge 4, participants build the multi-agent workflow visually in the Foundry portal before invoking it via SDK. Make sure they've deployed the agents first.
 3. **Keep the sensor_data.json visible** — Project it on screen or share the link. Participants reference it constantly in Challenge 1.
 4. **Don't skip the reconvene** — The 5-min bridges between challenges are where concepts click. They connect the "how" to the "why."
 5. **Fallback environment** — Have one pre-provisioned resource group that anyone can use if their deploy fails. Share read-only creds.

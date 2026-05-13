@@ -1,11 +1,9 @@
 """
-Challenge 3: Evaluate — SDK Track
+Challenge 3: Evaluate — SDK Track (Solution)
 Run evaluations against the test dataset using built-in evaluators.
 
 Usage:
     python evaluate.py
-
-Fill in the TODOs to complete the evaluation pipeline.
 """
 
 import json
@@ -20,7 +18,7 @@ def _find_repo_root() -> Path:
     for parent in Path(__file__).resolve().parents:
         if (parent / ".env").exists():
             return parent
-    return Path(__file__).resolve().parents[3]
+    return Path(__file__).resolve().parents[2]
 
 
 # Load environment
@@ -54,7 +52,6 @@ def run_agent_on_dataset(dataset: list) -> list:
     )
     openai_client = client.get_openai_client()
 
-    # Create the agent for evaluation
     agent = client.agents.create_version(
         agent_name="eval-anomaly-agent",
         definition=PromptAgentDefinition(
@@ -72,37 +69,24 @@ def run_agent_on_dataset(dataset: list) -> list:
     print(f"Processing {len(dataset)} test cases...")
 
     for i, test_case in enumerate(dataset, 1):
-        # TODO: For each test case, create a conversation, send the input, get
-        # the response, and collect the text output.
-        #
-        # conversation = openai_client.conversations.create()
-        # response = openai_client.responses.create(
-        #     input=test_case["input"],
-        #     conversation=conversation.id,
-        #     extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
-        # )
-        # response_text = response.output_text
-        # openai_client.conversations.delete(conversation_id=conversation.id)
-        #
-        # results.append({
-        #     "id": test_case["id"],
-        #     "input": test_case["input"],
-        #     "expected_output": test_case["expected_output"],
-        #     "actual_output": response_text,
-        # })
-        # classification = test_case["expected_output"]["classification"]
-        # print(f"  [{i}/{len(dataset)}] {test_case['id']}: {classification} classification")
+        conversation = openai_client.conversations.create()
+        response = openai_client.responses.create(
+            input=test_case["input"],
+            conversation=conversation.id,
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
+        )
+        response_text = response.output_text
+        openai_client.conversations.delete(conversation_id=conversation.id)
 
-        # TODO: Remove this placeholder once implemented
         results.append({
             "id": test_case["id"],
             "input": test_case["input"],
             "expected_output": test_case["expected_output"],
-            "actual_output": "",
+            "actual_output": response_text,
         })
-        print(f"  [{i}/{len(dataset)}] {test_case['id']}: (not implemented yet)")
+        classification = test_case["expected_output"]["classification"]
+        print(f"  [{i}/{len(dataset)}] {test_case['id']}: {classification} classification")
 
-    # Cleanup
     client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
     client.close()
 
@@ -110,43 +94,65 @@ def run_agent_on_dataset(dataset: list) -> list:
 
 
 def run_evaluators(results: list):
-    """Run built-in LLM-as-judge evaluators on the agent's responses."""
+    """
+    Run built-in LLM-as-judge evaluators using the azure-ai-evaluation SDK.
+    Results are uploaded to the Foundry portal (Evaluation tab) automatically.
+    """
     print("\n=== Running Evaluators ===")
 
-    # TODO: Import evaluate, CoherenceEvaluator, RelevanceEvaluator,
-    # AzureOpenAIModelConfiguration from azure.ai.evaluation.
-    # Import DefaultAzureCredential and get_bearer_token_provider from azure.identity.
-    #
-    # 1. Build a token provider:
-    #    credential = DefaultAzureCredential()
-    #    token_provider = get_bearer_token_provider(
-    #        credential, "https://cognitiveservices.azure.com/.default"
-    #    )
-    #
-    # 2. Build the model configuration:
-    #    model_config = AzureOpenAIModelConfiguration(
-    #        azure_endpoint=FOUNDRY_ENDPOINT,
-    #        azure_deployment=MODEL_DEPLOYMENT_NAME,
-    #        azure_ad_token_provider=token_provider,
-    #    )
-    #
-    # 3. Prepare eval_data as a list of {"query": ..., "response": ...} dicts
-    #    using r["input"] and r["actual_output"] from results.
-    #
-    # 4. Call evaluate() with:
-    #    - data=eval_data
-    #    - evaluators={"coherence": CoherenceEvaluator(model_config),
-    #                  "relevance": RelevanceEvaluator(model_config)}
-    #    - azure_ai_project={"subscription_id": AZURE_SUBSCRIPTION_ID,
-    #                        "resource_group_name": RESOURCE_GROUP,
-    #                        "project_name": PROJECT_NAME}
-    #    - evaluation_name="anomaly-detection-evaluation"
-    #
-    # 5. Print result.get("studio_url") so users can navigate to the portal.
-    # 6. Print a local metrics summary from result.get("metrics", {}).
+    from azure.ai.evaluation import (
+        AzureOpenAIModelConfiguration,
+        CoherenceEvaluator,
+        RelevanceEvaluator,
+        evaluate,
+    )
+    from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
-    # TODO: Remove placeholder once implemented
-    print("  (Evaluators not implemented yet -- fill in the TODOs)")
+    credential = DefaultAzureCredential()
+    token_provider = get_bearer_token_provider(
+        credential, "https://cognitiveservices.azure.com/.default"
+    )
+
+    model_config = AzureOpenAIModelConfiguration(
+        azure_endpoint=FOUNDRY_ENDPOINT,
+        azure_deployment=MODEL_DEPLOYMENT_NAME,
+        azure_ad_token_provider=token_provider,
+    )
+
+    eval_data = [
+        {"query": r["input"], "response": r["actual_output"]}
+        for r in results
+    ]
+
+    azure_ai_project = {
+        "subscription_id": AZURE_SUBSCRIPTION_ID,
+        "resource_group_name": RESOURCE_GROUP,
+        "project_name": PROJECT_NAME,
+    }
+
+    print(f"Evaluating {len(eval_data)} responses with CoherenceEvaluator + RelevanceEvaluator...")
+    result = evaluate(
+        data=eval_data,
+        evaluators={
+            "coherence": CoherenceEvaluator(model_config),
+            "relevance": RelevanceEvaluator(model_config),
+        },
+        azure_ai_project=azure_ai_project,
+        evaluation_name="anomaly-detection-evaluation",
+    )
+
+    studio_url = result.get("studio_url")
+    if studio_url:
+        print(f"\nResults visible in Foundry portal:")
+        print(f"  {studio_url}")
+    else:
+        print("\nEvaluation complete. Navigate to Foundry portal -> Evaluation tab.")
+
+    metrics = result.get("metrics", {})
+    if metrics:
+        print("\nMetrics summary:")
+        for k, v in metrics.items():
+            print(f"  {k}: {v:.2f}" if isinstance(v, float) else f"  {k}: {v}")
 
 
 def main():

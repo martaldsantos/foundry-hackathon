@@ -15,8 +15,16 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+
+def _find_repo_root() -> Path:
+    for parent in Path(__file__).resolve().parents:
+        if (parent / ".env").exists():
+            return parent
+    return Path(__file__).resolve().parents[2]
+
+
 # Load environment FIRST — tracing env vars must be set before SDK import
-env_path = Path(__file__).resolve().parent.parent.parent / ".env"
+env_path = _find_repo_root() / ".env"
 load_dotenv(env_path)
 
 # Verify tracing is enabled

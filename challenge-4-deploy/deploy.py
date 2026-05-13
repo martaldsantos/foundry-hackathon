@@ -32,7 +32,7 @@ def _find_repo_root() -> Path:
     for parent in Path(__file__).resolve().parents:
         if (parent / ".env").exists():
             return parent
-    return Path(__file__).resolve().parents[3]
+    return Path(__file__).resolve().parents[1]
 
 
 env_path = _find_repo_root() / ".env"

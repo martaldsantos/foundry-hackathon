@@ -28,12 +28,16 @@ OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
 APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=xxx;...
 ```
 
-## Choose Your Track
+## Get Started
 
-| Track | Go to |
-|-------|-------|
-| Portal Track | [portal-track/README.md](./portal-track/README.md) |
-| SDK Track | [sdk-track/README.md](./sdk-track/README.md) |
+Open [monitor.py](./monitor.py) and fill in the TODOs to enable tracing.
+
+```bash
+cd challenge-2-monitor
+python monitor.py
+```
+
+See [solutions/monitor.py](./solutions/monitor.py) if you get stuck.
 
 ## Success Criteria
 

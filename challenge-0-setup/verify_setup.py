@@ -14,15 +14,23 @@ Prerequisites:
 import asyncio
 import os
 import sys
+from pathlib import Path
 
 from dotenv import load_dotenv
 from azure.ai.agents.aio import AgentsClient
 from azure.identity.aio import DefaultAzureCredential
 
 
+def _find_repo_root() -> Path:
+    for parent in Path(__file__).resolve().parents:
+        if (parent / ".env").exists():
+            return parent
+    return Path(__file__).resolve().parents[2]
+
+
 async def main():
     # Step 1: Load environment
-    env_path = os.path.join(os.path.dirname(__file__), "..", "..", ".env")
+    env_path = _find_repo_root() / ".env"
     load_dotenv(env_path)
 
     project_connection_string = os.getenv("PROJECT_CONNECTION_STRING")

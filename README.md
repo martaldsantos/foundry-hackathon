@@ -28,28 +28,20 @@ You'll build two agents:
 - A terminal (bash, PowerShell, or WSL)
 - ~15 minutes for infrastructure provisioning (run `challenge-0-setup/deploy.sh` first!)
 
-## Choose Your Track
+## Structure
 
-Each challenge offers two paths:
-
-| Track | Best for | You'll use |
-|-------|----------|------------|
-| **Portal Track** | Visual learners, less coding experience | Azure Portal, Foundry UI |
-| **SDK Track** | Developers, automation-minded | Python, azure-ai-projects SDK |
-
-You can mix tracks across challenges — they cover the same concepts.
+All challenges are Python SDK-based. Challenge 4 also walks you through the Foundry portal to build and test the multi-agent workflow visually — both parts are in the same [challenge-4-deploy/README.md](./challenge-4-deploy/README.md).
 
 ## Challenges
 
 | # | Challenge | Duration | What You'll Do |
 |---|-----------|----------|----------------|
 | 0 | [Setup](./challenge-0-setup/) | 20 min | Provision resources, verify auth |
-| 1 | [Build Agents](./challenge-1-build/) | 50 min | Create anomaly detection & fault diagnosis agents |
-| 2 | [Monitor](./challenge-2-monitor/) | 30 min | Enable tracing, explore App Insights |
-| 3 | [Evaluate](./challenge-3-evaluate/) | 30 min | Run evaluations, interpret quality metrics |
-| 4 | [Workflow](./challenge-4-deploy/) | 30 min | Build a multi-agent workflow: anomaly scan → fault diagnosis → factory health report |
+| 1 | [Build Agents](./challenge-1-build/) | 30 min | Create anomaly detection & fault diagnosis agents |
+| 2 | [Monitor](./challenge-2-monitor/) | 15 min | Enable tracing, explore App Insights |
+| 3 | [Evaluate](./challenge-3-evaluate/) | 20 min | Run evaluations, interpret quality metrics |
+| 4 | [Workflow](./challenge-4-deploy/) | 20 min | Build a multi-agent workflow: anomaly scan → fault diagnosis → factory health report |
 
-**Total time: ~2.5 hours**
 
 ## Quick Start
 
@@ -69,7 +61,14 @@ bash challenge-0-setup/deploy.sh
 # 5. Start Challenge 0!
 ```
 
-> **Using GitHub Codespaces?** Click **Code → Codespaces → New codespace** on the repo page. Dependencies install automatically via the devcontainer — skip steps 1-2 and start at step 3 (az login).
+### Using GitHub Codespaces?
+
+To open GitHub Codespaces, click on the button below:
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/)
+
+Please select your forked repository from the dropdown and, if necessary, adjust other settings of GitHub Codespace.
+
 
 ## Architecture
 
