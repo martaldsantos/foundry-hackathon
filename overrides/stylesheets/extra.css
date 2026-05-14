@@ -1,0 +1,201 @@
+/* Frontier Week Branding — Microsoft Cloud & AI */
+
+:root {
+  /* Core palette */
+  --fw-text: #10233c;
+  --fw-muted: #4e647f;
+  --fw-accent: #2f80ed;
+  --fw-accent-strong: #5aa8ff;
+  --fw-bg-start: #eef4f9;
+  --fw-bg-end: #e8f1f8;
+  --fw-hero-1: rgba(128, 139, 235, 0.95);
+  --fw-hero-2: rgba(120, 184, 230, 0.86);
+  --fw-hero-3: rgba(102, 176, 228, 0.52);
+  --fw-hero-4: rgba(79, 136, 231, 0.86);
+  --fw-card-bg: rgba(231, 241, 251, 0.92);
+  --fw-shadow: 0 18px 42px rgba(39, 86, 140, 0.12);
+}
+
+/* Override MkDocs Material CSS vars */
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: #2f80ed;
+  --md-primary-fg-color--light: #5aa8ff;
+  --md-primary-fg-color--dark: #1a5eb8;
+  --md-accent-fg-color: #5aa8ff;
+  --md-default-fg-color: #10233c;
+  --md-default-fg-color--light: #4e647f;
+  --md-typeset-color: #10233c;
+}
+
+/* Page background gradient */
+body {
+  background: linear-gradient(180deg, var(--fw-bg-start) 0%, var(--fw-bg-end) 100%);
+  background-attachment: fixed;
+}
+
+/* Header — hero gradient */
+.md-header {
+  background: linear-gradient(90deg, var(--fw-hero-1), var(--fw-hero-2) 36%, var(--fw-hero-3) 62%, var(--fw-hero-4));
+  box-shadow: var(--fw-shadow);
+}
+
+.md-header[data-md-state="shadow"] {
+  box-shadow: var(--fw-shadow);
+}
+
+/* Tabs bar styling */
+.md-tabs {
+  background: linear-gradient(90deg, rgba(128, 139, 235, 0.85), rgba(79, 136, 231, 0.85));
+}
+
+.md-tabs__link {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+}
+
+.md-tabs__link--active,
+.md-tabs__link:hover {
+  color: #ffffff;
+}
+
+/* Font family */
+body,
+.md-typeset {
+  font-family: "Segoe UI", SegoeUI, Arial, sans-serif;
+  color: var(--fw-text);
+}
+
+/* Content area */
+.md-main__inner {
+  margin-top: 0;
+}
+
+.md-content {
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+  box-shadow: var(--fw-shadow);
+}
+
+/* Sidebar */
+.md-sidebar {
+  background: transparent;
+}
+
+.md-nav__link {
+  color: var(--fw-text);
+}
+
+.md-nav__link--active {
+  color: var(--fw-accent);
+  font-weight: 600;
+}
+
+/* Headings */
+.md-typeset h1 {
+  color: var(--fw-text);
+  font-weight: 700;
+}
+
+.md-typeset h2 {
+  color: var(--fw-text);
+  font-weight: 600;
+  border-bottom: 2px solid var(--fw-accent);
+  padding-bottom: 0.3rem;
+}
+
+/* Links */
+.md-typeset a {
+  color: var(--fw-accent);
+}
+
+.md-typeset a:hover {
+  color: var(--fw-accent-strong);
+}
+
+/* Code blocks */
+.md-typeset code {
+  background: var(--fw-card-bg);
+  border-radius: 6px;
+  color: var(--fw-text);
+}
+
+.md-typeset pre {
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(39, 86, 140, 0.08);
+}
+
+/* Admonitions */
+.md-typeset .admonition {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(39, 86, 140, 0.06);
+}
+
+/* Tables */
+.md-typeset table:not([class]) {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(39, 86, 140, 0.06);
+}
+
+.md-typeset table:not([class]) th {
+  background: var(--fw-accent);
+  color: #ffffff;
+}
+
+/* Search bar */
+.md-search__input {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+/* Footer */
+.md-footer {
+  background: linear-gradient(90deg, var(--fw-hero-1), var(--fw-hero-4));
+}
+
+.md-footer-meta {
+  background: rgba(16, 35, 60, 0.3);
+}
+
+/* Navigation tabs pills */
+.md-tabs__list {
+  gap: 0.25rem;
+}
+
+/* Buttons / CTAs in content */
+.md-typeset .md-button {
+  border-radius: 16px;
+  background: var(--fw-accent);
+  color: #ffffff;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.md-typeset .md-button:hover {
+  background: var(--fw-accent-strong);
+  box-shadow: 0 8px 24px rgba(47, 128, 237, 0.3);
+}
+
+/* Dark mode overrides */
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #5aa8ff;
+  --md-primary-fg-color--light: #7bbfff;
+  --md-primary-fg-color--dark: #2f80ed;
+  --md-accent-fg-color: #5aa8ff;
+}
+
+[data-md-color-scheme="slate"] body {
+  background: linear-gradient(180deg, #0d1b2a 0%, #1b2838 100%);
+}
+
+[data-md-color-scheme="slate"] .md-content {
+  background: rgba(20, 35, 55, 0.85);
+}
+
+[data-md-color-scheme="slate"] .md-typeset h2 {
+  border-bottom-color: #5aa8ff;
+}

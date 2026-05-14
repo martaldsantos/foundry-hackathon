@@ -34,6 +34,7 @@ jobs:
           cp -r factory docs/
           cp -r claims docs/
           cp -r callcenter docs/
+          cp -r overrides docs/
 
       - name: Build site
         run: mkdocs build
