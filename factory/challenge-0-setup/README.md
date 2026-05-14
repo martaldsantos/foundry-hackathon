@@ -1,18 +1,60 @@
 # Challenge 0: Setup & Authentication
 
+Time: ~15 minutes
+
 ## Objectives
 
 By the end of this challenge, you will have:
-- ✅ A fully provisioned Azure AI Foundry project with a deployed model
+- ✅ A fully provisioned Microsoft Foundry project with a deployed model
 - ✅ Application Insights provisioned and connection string available
 - ✅ Verified authentication from your local machine to Foundry
 - ✅ Confirmed your agent endpoint is working
 
-## Time: ~15 minutes
+## Get Started
 
-## Before You Start
+There are two ways to get started — pick one:
 
-Make sure you've already run `deploy.sh` — if you haven't, do it now!
+> **First step for both options:** [Fork this repository](https://github.com/martaldsantos/foundry-hackathon/fork) to your own GitHub account.
+
+### Option A: GitHub Codespaces (recommended)
+
+No local installs needed. Everything runs in a cloud dev environment.
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/martaldsantos/foundry-hackathon)
+
+1. Click the badge above (select your fork if applicable)
+2. Wait for the Codespace to build (~2 min)
+3. In the terminal, login to Azure and deploy your scenario:
+
+```bash
+az login
+```
+
+4. Continue to **Deploy Infrastructure** below.
+
+---
+
+### Option B: Local environment
+
+Run everything on your own machine. Requires Python 3.10+ and Azure CLI.
+
+```bash
+# 1. Clone this repo
+git clone https://github.com/martaldsantos/foundry-hackathon.git
+cd foundry-hackathon
+
+# 2. Install Python dependencies
+pip install -r requirements.txt
+
+# 3. Login to Azure
+az login
+```
+
+4. Continue to **Deploy Infrastructure** below.
+
+## Deploy Infrastructure
+
+From the **factory** folder, run the deploy script:
 
 ```bash
 bash challenge-0-setup/deploy.sh
@@ -20,19 +62,8 @@ bash challenge-0-setup/deploy.sh
 
 This will provision all resources **and** automatically write your `.env` file to the repository root as `.env`.
 
-## Get Started
-
-Run the setup verification:
-
-```bash
-cd challenge-0-setup
-python verify_setup.py
-```
-
-See [solutions/verify_setup.py](./solutions/verify_setup.py) if you get stuck.
-
 ## Success Criteria
 
 - [ ] You can see your AI Foundry project in the Azure Portal
 - [ ] A model deployment for gpt-5.1 or gpt-5.4 shows "Succeeded" status
-- [ ] You can either: send a test message in the Foundry Playground (Portal) or run `verify_setup.py` without errors (SDK)
+- [ ] You can send a test message in the Foundry Playground (Portal)

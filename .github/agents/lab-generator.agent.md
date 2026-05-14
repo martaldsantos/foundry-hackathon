@@ -28,8 +28,7 @@ You are modeled after the TireForge Industries foundry-hackathon lab. You know:
 ├── challenge-0-setup/
 │   ├── README.md
 │   ├── deploy.sh                # Provisions Azure resources + writes .env
-│   ├── retrieve-keys.sh
-│   └── verify_setup.py
+│   └── retrieve-keys.sh
 ├── challenge-1-build/
 │   ├── README.md
 │   ├── agents.py                # Two agents with system prompts + tool
@@ -126,7 +125,7 @@ When generating a lab, produce all files in order:
 3. Domain data JSON
 4. `evaluation_dataset.json`
 5. Each challenge folder's `README.md` + Python file
-6. `deploy.sh` and `verify_setup.py`
+6. `deploy.sh`
 7. `FACILITATOR_GUIDE.md` last (references all challenges)
 
 Always confirm the use case with the user before generating. Ask if they want any specific twists (e.g., "one entity should have compound failures" or "include a seasonal pattern").

@@ -7,7 +7,7 @@ By the end of this challenge, you will have:
 - ✅ Agent interactions visible as traces in Application Insights
 - ✅ Understanding of how to debug agent behaviour in production
 
-## Time: ~10 minutes
+Time: ~10 minutes
 
 ## Context
 

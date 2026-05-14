@@ -57,7 +57,7 @@ python agents.py
 
 ```
 ┌──────────────────────────────────────────────────────┐
-│                  Azure AI Foundry                     │
+│                  Microsoft Foundry                     │
 │  ┌──────────────────┐    ┌──────────────────────────┐│
 │  │ Claims Triage    │    │ Claims Decision Agent    ││
 │  │ Agent            │    │ (persistent v1)          ││

@@ -23,7 +23,7 @@ Build an AI agent system that:
 
 | # | Challenge | What You'll Do | Time |
 |---|-----------|---------------|------|
-| 0 | [Setup](./challenge-0-setup/README.md) | Deploy Azure AI Foundry infrastructure | 15 min |
+| 0 | [Setup](./challenge-0-setup/README.md) | Deploy Microsoft Foundry infrastructure | 15 min |
 | 1 | [Build Agents](./challenge-1-build/README.md) | Create Intent Classification + Resolution Advisor agents | 20 min |
 | 2 | [Monitor](./challenge-2-monitor/README.md) | Enable GenAI tracing with Application Insights | 10 min |
 | 3 | [Evaluate](./challenge-3-evaluate/README.md) | Run systematic quality evaluations | 15 min |
@@ -33,7 +33,7 @@ Build an AI agent system that:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                   Azure AI Foundry                       │
+│                   Microsoft Foundry                       │
 │                                                         │
 │  ┌─────────────────┐      ┌──────────────────────┐     │
 │  │ Intent Agent    │      │  Resolution Advisor  │     │

@@ -80,7 +80,7 @@ CLAIMSIGHT INSURANCE — CLAIMS PROCESSING REPORT
 
 ### Step 3: Create the workflow in Foundry portal
 
-1. Open the [Azure AI Foundry portal](https://ai.azure.com)
+1. Open the [Microsoft Foundry portal](https://ai.azure.com)
 2. Navigate to **Build** → **Workflows** → **New workflow**
 3. Add two steps:
    - Step 1: `claims-triage-agent` — "Assess all claims and report flags"
