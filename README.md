@@ -1,24 +1,26 @@
-# 🏭 Foundry Hackathon: AI Agents for Predictive Manufacturing
+# 🤖 Foundry Lab: Build AI Agents with Azure AI Foundry
 
-## Scenario
+A hands-on step-by-step lab that teaches you to **build, monitor, evaluate, and orchestrate AI agents** using the Azure AI Foundry SDK. Complete in ~75 minutes.
 
-You work at **TireForge Industries**, a tire manufacturing plant with 5 critical machines on the production floor. Each machine emits real-time sensor data (temperature, pressure, vibration, RPM). Lately, unexpected failures have been causing costly downtime.
+## Choose Your Scenario
 
-Your mission: **Build AI agents using Microsoft Foundry** that can detect anomalies in sensor readings and diagnose potential faults before machines break down.
+All paths teach the same Foundry concepts — pick the one that resonates with your audience:
 
-You'll build two agents:
-1. **Anomaly Detection Agent** — Monitors sensor data and flags readings outside normal thresholds
-2. **Fault Diagnosis Agent** — Takes flagged anomalies and recommends maintenance actions
+| Scenario | Industry | Description | Start Here |
+|----------|----------|-------------|------------|
+| 🏭 **Factory** | Manufacturing | Detect machine anomalies and diagnose faults at TireForge Industries | [Factory Lab →](./factory/) |
+| 📋 **Claims** | Insurance | Triage incoming claims and recommend actions at ClaimSight Insurance | [Claims Lab →](./claims/) |
+| 📞 **Call Center** | Telecom | Classify call intents and advise resolutions at NovaTel Communications | [Call Center Lab →](./callcenter/) |
 
-## The Machines
+All scenarios follow the same 5-challenge structure:
 
-| Machine | Role | Status |
-|---------|------|--------|
-| Mixer | Blends raw rubber compounds | ⚠️ Warning |
-| Extruder | Shapes rubber into treads | ✅ Normal |
-| Curing Press | Vulcanizes tire under heat/pressure | 🔴 Critical |
-| Cooling Unit | Brings cured tires to safe temp | ✅ Normal |
-| Inspection Station | QA checks via vibration analysis | ⚠️ Warning |
+| # | Challenge | Duration | What You'll Learn |
+|---|-----------|----------|-------------------|
+| 0 | **Setup** | 15 min | Provision Azure AI Foundry, deploy a model, verify auth |
+| 1 | **Build Agents** | 20 min | Create two agents with tools and system prompts |
+| 2 | **Monitor** | 10 min | Enable GenAI tracing with Application Insights |
+| 3 | **Evaluate** | 15 min | Run LLM-as-judge evaluations against test datasets |
+| 4 | **Workflow** | 15 min | Orchestrate agents in a multi-step pipeline |
 
 ## Prerequisites
 
@@ -26,21 +28,34 @@ You'll build two agents:
 - **Python 3.10+** installed locally
 - **Azure CLI** (`az`) installed and logged in (`az login`)
 - A terminal (bash, PowerShell, or WSL)
-- ~15 minutes for infrastructure provisioning (run `challenge-0-setup/deploy.sh` first!)
+- ~15 minutes for infrastructure provisioning
 
 ## Structure
 
-All challenges are Python SDK-based. Challenge 4 also walks you through the Foundry portal to build and test the multi-agent workflow visually — both parts are in the same [challenge-4-deploy/README.md](./challenge-4-deploy/README.md).
+Each scenario is self-contained with its own setup (Challenge 0) through deployment (Challenge 4):
 
-## Challenges
-
-| # | Challenge | Duration | What You'll Do |
-|---|-----------|----------|----------------|
-| 0 | [Setup](./challenge-0-setup/) | 20 min | Provision resources, verify auth |
-| 1 | [Build Agents](./challenge-1-build/) | 30 min | Create anomaly detection & fault diagnosis agents |
-| 2 | [Monitor](./challenge-2-monitor/) | 15 min | Enable tracing, explore App Insights |
-| 3 | [Evaluate](./challenge-3-evaluate/) | 20 min | Run evaluations, interpret quality metrics |
-| 4 | [Workflow](./challenge-4-deploy/) | 20 min | Build a multi-agent workflow: anomaly scan → fault diagnosis → factory health report |
+```
+foundry-hackathon/
+├── factory/                 ← 🏭 Factory scenario (challenges 0-4)
+│   ├── challenge-0-setup/
+│   ├── challenge-1-build/
+│   ├── challenge-2-monitor/
+│   ├── challenge-3-evaluate/
+│   └── challenge-4-deploy/
+├── claims/                  ← 📋 Claims scenario (challenges 0-4)
+│   ├── challenge-0-setup/
+│   ├── challenge-1-build/
+│   ├── challenge-2-monitor/
+│   ├── challenge-3-evaluate/
+│   └── challenge-4-deploy/
+├── callcenter/              ← 📞 Call Center scenario (challenges 0-4)
+│   ├── challenge-0-setup/
+│   ├── challenge-1-build/
+│   ├── challenge-2-monitor/
+│   ├── challenge-3-evaluate/
+│   └── challenge-4-deploy/
+└── requirements.txt         ← Shared dependencies
+```
 
 
 ## Quick Start
@@ -55,10 +70,18 @@ pip install -r requirements.txt
 # 3. Login to Azure
 az login
 
-# 4. Deploy infrastructure & auto-generate .env (~5 min)
-bash challenge-0-setup/deploy.sh
+# 4. Pick your scenario and deploy infrastructure (~5 min)
+#    Factory:
+cd factory/challenge-0-setup && bash deploy.sh && cd ..
+#    Claims:
+cd claims/challenge-0-setup && bash deploy.sh && cd ..
+#    Call Center:
+cd callcenter/challenge-0-setup && bash deploy.sh && cd ..
 
-# 5. Start Challenge 0!
+# 5. Start Challenge 1!
+#    Factory:     cd factory/challenge-1-build && python agents.py
+#    Claims:      cd claims/challenge-1-build && python agents.py
+#    Call Center: cd callcenter/challenge-1-build && python agents.py
 ```
 
 ### Using GitHub Codespaces?
@@ -72,11 +95,13 @@ Please select your forked repository from the dropdown and, if necessary, adjust
 
 ## Architecture
 
+Both scenarios follow the same architecture pattern:
+
 ```
 ┌──────────────────────────────────────────────────────┐
-│                  Azure AI Foundry                     │
+│                  Microsoft Foundry                     │
 │  ┌──────────────────┐    ┌──────────────────────────┐│
-│  │ Anomaly Agent    │    │ Fault Diagnosis Agent    ││
+│  │ Detection Agent  │    │ Recommendation Agent     ││
 │  │ (persistent v1)  │    │ (persistent v1)          ││
 │  └────────┬─────────┘    └───────────┬──────────────┘│
 │           │                          │                │

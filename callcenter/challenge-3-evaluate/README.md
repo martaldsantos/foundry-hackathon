@@ -1,0 +1,40 @@
+# Challenge 3: Evaluate
+
+## Objectives
+
+By the end of this challenge, you will have:
+- ✅ Run a systematic evaluation of your agents against a test dataset
+- ✅ Used built-in evaluators (coherence, relevance) to measure quality
+- ✅ Interpreted evaluation metrics and identified areas for improvement
+- ✅ Understanding of how to integrate evaluations into a CI/CD pipeline
+
+## Time: ~15 minutes
+
+## Context
+
+Monitoring tells you **what's happening** (latency, errors, token usage). Evaluation tells you **if the classifications are actually correct**.
+
+You have a dataset of 10 test cases — each with a call scenario and the expected correct classification (intent, priority, sentiment, recommended action). You'll run your agents against these test cases and measure how well they perform using LLM-as-judge scoring.
+
+## The Evaluation Dataset
+
+The dataset lives at [challenge-4-deploy/evaluation_dataset.json](../challenge-4-deploy/evaluation_dataset.json) — it contains:
+- 10 call scenarios covering all 6 intent types
+- Each has an `input` (call summary you send to the agent)
+- Each has an `expected_output` (the correct classification and action)
+
+## Get Started
+
+Open [evaluate.py](./evaluate.py) and review the evaluation pipeline.
+
+```bash
+cd callcenter/challenge-3-evaluate
+python evaluate.py
+```
+
+## Success Criteria
+
+- [ ] Evaluation runs against all 10 test cases without errors
+- [ ] You can see per-row scores for coherence and relevance
+- [ ] You've identified at least one case where the agent could improve
+- [ ] You understand the difference between aggregate metrics and per-row analysis
