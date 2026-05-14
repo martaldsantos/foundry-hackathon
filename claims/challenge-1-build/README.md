@@ -7,7 +7,7 @@ By the end of this challenge, you will have:
 - ✅ A **Claims Decision Agent** that analyzes flagged claims and recommends actions
 - ✅ Both agents tested against real claims data
 
-Time: ~20 minutes
+Time: ~35 minutes
 
 ## Context
 

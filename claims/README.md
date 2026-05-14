@@ -26,7 +26,7 @@ You'll build two agents:
 - **Python 3.10+** installed locally
 - **Azure CLI** (`az`) installed and logged in (`az login`)
 - A terminal (bash, PowerShell, or WSL)
-- ~15 minutes for infrastructure provisioning (run `challenge-0-setup/deploy.sh` from the repo root first!)
+- ~20 minutes for infrastructure provisioning (run `challenge-0-setup/deploy.sh` from the repo root first!)
 
 ## Structure
 
@@ -36,11 +36,11 @@ All challenges are Python SDK-based. Challenge 4 also walks you through the Foun
 
 | # | Challenge | Duration | What You'll Do |
 |---|-----------|----------|----------------|
-| 0 | [Setup](../challenge-0-setup/) | 15 min | Provision resources, verify auth |
-| 1 | [Build Agents](./challenge-1-build/) | 20 min | Create claims triage & decision agents |
-| 2 | [Monitor](./challenge-2-monitor/) | 10 min | Enable tracing, explore App Insights |
-| 3 | [Evaluate](./challenge-3-evaluate/) | 15 min | Run evaluations, interpret quality metrics |
-| 4 | [Workflow](./challenge-4-deploy/) | 15 min | Build a multi-agent workflow: triage → decision → claims report |
+| 0 | [Setup](../challenge-0-setup/) | 20 min | Provision resources, verify auth |
+| 1 | [Build Agents](./challenge-1-build/) | 35 min | Create claims triage & decision agents |
+| 2 | [Monitor](./challenge-2-monitor/) | 20 min | Enable tracing, explore App Insights |
+| 3 | [Evaluate](./challenge-3-evaluate/) | 25 min | Run evaluations, interpret quality metrics |
+| 4 | [Workflow](./challenge-4-deploy/) | 20 min | Build a multi-agent workflow: triage → decision → claims report |
 
 ## Quick Start
 

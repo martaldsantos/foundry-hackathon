@@ -1,6 +1,6 @@
 # Challenge 0: Setup & Authentication
 
-Time: ~15 minutes
+Time: ~20 minutes
 
 ## Objectives
 
