@@ -1,0 +1,75 @@
+site_name: Foundry Lab — Build AI Agents with Azure AI Foundry
+site_description: A hands-on lab teaching you to build, monitor, evaluate, and orchestrate AI agents using the Azure AI Foundry SDK.
+site_url: https://martaldsantos.github.io/foundry-hackathon/
+repo_url: https://github.com/martaldsantos/foundry-hackathon
+repo_name: martaldsantos/foundry-hackathon
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: README.md
+  - 🏭 Factory:
+      - Overview: factory/README.md
+      - Challenge 0 — Setup: factory/challenge-0-setup/README.md
+      - Challenge 1 — Build Agents: factory/challenge-1-build/README.md
+      - Challenge 2 — Monitor: factory/challenge-2-monitor/README.md
+      - Challenge 3 — Evaluate: factory/challenge-3-evaluate/README.md
+      - Challenge 4 — Workflow: factory/challenge-4-deploy/README.md
+      - Facilitator Guide: factory/FACILITATOR_GUIDE.md
+  - 📋 Claims:
+      - Overview: claims/README.md
+      - Challenge 0 — Setup: claims/challenge-0-setup/README.md
+      - Challenge 1 — Build Agents: claims/challenge-1-build/README.md
+      - Challenge 2 — Monitor: claims/challenge-2-monitor/README.md
+      - Challenge 3 — Evaluate: claims/challenge-3-evaluate/README.md
+      - Challenge 4 — Workflow: claims/challenge-4-deploy/README.md
+      - Facilitator Guide: claims/FACILITATOR_GUIDE.md
+  - 📞 Call Center:
+      - Overview: callcenter/README.md
+      - Challenge 0 — Setup: callcenter/challenge-0-setup/README.md
+      - Challenge 1 — Build Agents: callcenter/challenge-1-build/README.md
+      - Challenge 2 — Monitor: callcenter/challenge-2-monitor/README.md
+      - Challenge 3 — Evaluate: callcenter/challenge-3-evaluate/README.md
+      - Challenge 4 — Workflow: callcenter/challenge-4-deploy/README.md
+      - Facilitator Guide: callcenter/FACILITATOR_GUIDE.md

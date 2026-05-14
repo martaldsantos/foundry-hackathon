@@ -170,3 +170,65 @@ You will see each workflow step appear live in the terminal:
 - [ ] Both agents visible in the Foundry portal as persistent assets
 - [ ] Visual workflow created in the portal and tested in its playground
 - [ ] Portal workflow invoked from Python with live step streaming
+
+---
+
+## Beyond the Lab: Production Deployment Options
+
+You've built and tested your agents locally. Here's how to take them to production:
+
+### Option 1: Hosted Agents (What You Already Have)
+
+Your agents created with `agents.create_version()` are already production-ready hosted agents. They live in Foundry indefinitely — any client can invoke them by name via the Responses API. No infrastructure to manage; Foundry handles scaling, versioning, and availability.
+
+- **Versioning**: Each `create_version()` produces an immutable version. Roll back by referencing an older version.
+- **Multi-tenant**: Multiple users/apps can call the same agent simultaneously.
+- **Portal visibility**: Agents appear under Build → Agents with playground, run history, and tracing.
+
+### Option 2: Foundry Workflows (Visual Orchestration)
+
+What you built in Part 2 — wire multiple hosted agents into a DAG using the portal designer. The workflow becomes a deployable agent invoked via the same Responses API.
+
+- Step sequencing with automatic output passing
+- Streaming `workflow_action` events showing progress
+- Run history with per-step timing
+
+### Option 3: Azure App Service / Container Apps
+
+Wrap your Python workflow in a FastAPI/Flask app for custom middleware, auth, or business logic:
+
+```python
+# Example: FastAPI endpoint that calls your Foundry agents
+@app.post("/factory-health-check")
+async def health_check():
+    report = run_factory_health_workflow(anomaly_agent, diagnosis_agent)
+    return report
+```
+
+Deploy to **App Service** (managed PaaS) or **Container Apps** (auto-scaling containers).
+
+### Option 4: Azure Functions (Event-Driven)
+
+Trigger agent workflows from events:
+- **Timer trigger**: Run the factory health check every hour
+- **Service Bus trigger**: Process each anomaly alert as it arrives from IoT Hub
+- **HTTP trigger**: On-demand endpoint for maintenance teams
+
+Pay-per-execution, scales to zero when idle.
+
+### Option 5: CI/CD Quality Gates
+
+Integrate evaluation into your deployment pipeline:
+- Run `evaluate.py` on every PR — block merge if quality drops below threshold
+- Promote agent versions: `v1-dev` → `v1-staging` → `v1-prod` after evaluation passes
+- Blue/green: Deploy new version to 10% traffic, compare metrics, then promote
+
+### Summary
+
+| Pattern | Best For |
+|---------|----------|
+| Hosted Agents | Always-on, invoke by name, no infra management |
+| Foundry Workflows | Multi-agent orchestration without code |
+| App Service / Containers | Custom auth, middleware, webhooks |
+| Azure Functions | Event-driven, pay-per-use, IoT integration |
+| CI/CD Gates | Automated quality assurance before promotion |
