@@ -42,17 +42,6 @@ All challenges are Python SDK-based. Challenge 4 also walks you through the Foun
 | 3 | [Evaluate](./challenge-3-evaluate/) | 25 min | Run evaluations, interpret quality metrics |
 | 4 | [Workflow](./challenge-4-deploy/) | 20 min | Build a multi-agent workflow: triage → decision → claims report |
 
-## Quick Start
-
-```bash
-# 1. Complete Challenge 0 (shared setup) from the repo root
-bash challenge-0-setup/deploy.sh
-
-# 2. Start Challenge 1
-cd claims/challenge-1-build
-python agents.py
-```
-
 ## Architecture
 
 ```

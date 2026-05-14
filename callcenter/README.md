@@ -51,15 +51,3 @@ Build an AI agent system that:
 │  └──────────────┘  └───────────────┘  └────────────┘  │
 └─────────────────────────────────────────────────────────┘
 ```
-
-## Quick Start
-
-```bash
-# 1. Complete setup
-cd challenge-0-setup
-bash deploy.sh
-
-# 2. Start the call center challenges
-cd ../challenge-1-build
-python agents.py
-```

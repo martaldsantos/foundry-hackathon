@@ -50,15 +50,3 @@ Build an AI agent system that:
 │  └──────────────┘  └───────────────┘  └────────────┘  │
 └─────────────────────────────────────────────────────────┘
 ```
-
-## Quick Start
-
-```bash
-# 1. Complete setup
-cd challenge-0-setup
-bash deploy.sh
-
-# 2. Start the factory challenges
-cd ../challenge-1-build
-python agents.py
-```
