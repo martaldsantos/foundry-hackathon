@@ -47,7 +47,31 @@ az cognitiveservices account create \
     --sku S0 \
     --location "$LOCATION" \
     --custom-domain "$FOUNDRY_RESOURCE_NAME" \
+    --disable-local-auth false \
     --output none
+
+# Some tenants enforce this with Azure Policy. Try to force-enable key auth and verify.
+FOUNDRY_RESOURCE_ID=$(az cognitiveservices account show \
+    --name "$FOUNDRY_RESOURCE_NAME" \
+    --resource-group "$RESOURCE_GROUP" \
+    --query id -o tsv)
+
+az resource update \
+    --ids "$FOUNDRY_RESOURCE_ID" \
+    --set properties.disableLocalAuth=false \
+    --output none || true
+
+DISABLE_LOCAL_AUTH=$(az cognitiveservices account show \
+    --name "$FOUNDRY_RESOURCE_NAME" \
+    --resource-group "$RESOURCE_GROUP" \
+    --query properties.disableLocalAuth -o tsv)
+
+if [ "$DISABLE_LOCAL_AUTH" = "true" ]; then
+    echo "❌ API key authentication is still disabled on the Foundry resource."
+    echo "   This is usually enforced by Azure Policy in your tenant/subscription."
+    echo "   Ask an Azure admin to allow local auth or use Entra ID-only evaluation flow."
+    exit 1
+fi
 
 echo ">>> Creating AI Foundry project..."
 az cognitiveservices account project create \

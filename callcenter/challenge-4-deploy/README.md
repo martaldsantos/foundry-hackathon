@@ -131,13 +131,47 @@ NOVATEL CALL CENTER — SHIFT REPORT
 
 ### Step 7: Test the workflow in the portal playground
 
-1. Open the workflow → **Playground**
-2. Send:
+> **Why you must include the call data in your message**
+>
+> The agents use a `lookup_customer` tool that reads from a local Python file.
+> The portal playground **cannot execute Python functions** — if you send a generic
+> prompt, the agent will try to call the tool and stall waiting for a result that
+> never arrives. Paste the call data directly into your message so the agents can
+> work without needing the tool.
+
+1. Open **callcenter-triage-workflow** → **Playground**
+2. Paste the following message (data is pre-embedded so no tool calls are needed):
+
    ```
-   Process all incoming calls. Classify each one and provide resolution recommendations for high-priority items.
+   All call data for today is below — analyse it directly, do not call lookup_customer.
+
+   CALL-001 | Maria Gonzalez | premium | 36 months
+   Unexpected $47.99 charge for sports add-on she never subscribed to. Wants refund, threatening to cancel.
+
+   CALL-002 | James Liu | basic | 4 months
+   Internet dropping every 20-30 minutes since yesterday. Works from home, presentation tomorrow. 1 open ticket.
+
+   CALL-003 | Priya Sharma | premium | 18 months
+   Moving to city without NovaTel coverage, wants to cancel. Asking about ETF and final bill.
+
+   CALL-004 | Robert Chen | business | 24 months
+   Wants to expand from 5 to 12 lines for new hires. Asking about bulk pricing and number porting.
+
+   CALL-005 | Sarah Mitchell | basic | 60 months
+   Confused by new app UI — cannot find billing or data usage pages. 2 open tickets.
+
+   CALL-006 | David Park | premium | 12 months
+   Charged $899 for a device returned 3 weeks ago (has FedEx proof of delivery). 1 open ticket.
+
+   CALL-007 | Emma Wilson | basic | 8 months
+   Suspected account breach — unsolicited SMS verification codes, unfamiliar device on account.
+
+   Classify each call by intent, priority, sentiment, and retention risk.
+   Then recommend resolution strategies for high-priority and security calls.
    ```
+
 3. Watch the steps execute in sequence — classification first, then resolution advisory
-4. Review the final consolidated shift report
+4. Review the final consolidated report
 
 ### Step 8: Invoke the portal workflow from Python (streaming)
 

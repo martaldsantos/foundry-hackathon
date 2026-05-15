@@ -126,11 +126,53 @@ TIREFORGE FACTORY HEALTH REPORT
 
 ### Step 7: Test the workflow in the portal playground
 
-1. Open the workflow → **Playground**
-2. Send:
+> **Why you must include the sensor data in your message**
+>
+> The agents use a `check_thresholds` tool that reads from a local Python file.
+> The portal playground **cannot execute Python functions** — if you send a generic
+> prompt, the agent will try to call the tool and stall waiting for a result that
+> never arrives. Paste the sensor readings directly into your message so the agents
+> can work without needing the tool.
+
+1. Open **factory-health-workflow** → **Playground**
+2. Paste the following message (data is pre-embedded so no tool calls are needed):
+
    ```
-   Run a full factory health check. Check all 5 machines for anomalies and diagnose any faults found.
+   All sensor readings for today are below — analyse them directly, do not call check_thresholds.
+
+   MX-001 (mixer) — status: warning
+     temperature: 92.3°C  [normal 60–90]  ⚠️ ABOVE MAX
+     pressure:     3.1 bar [normal 2.0–4.0]
+     vibration:    4.8 mm/s [normal 0–4.5]  ⚠️ ABOVE MAX
+     rpm:          58 rpm  [normal 40–65]
+
+   EX-002 (extruder) — status: normal
+     temperature: 115.0°C [normal 100–130]
+     pressure:    12.5 bar [normal 10.0–15.0]
+     vibration:    2.1 mm/s [normal 0–3.5]
+     rpm:          30 rpm  [normal 20–40]
+
+   CP-003 (curing_press) — status: critical
+     temperature: 198.5°C [normal 140–180]  🔴 ABOVE MAX
+     pressure:    18.2 bar [normal 12.0–16.0]  🔴 ABOVE MAX
+     vibration:    7.3 mm/s [normal 0–3.0]  🔴 ABOVE MAX
+     rpm:           0 rpm  [normal 0]
+
+   CU-004 (cooling_unit) — status: normal
+     temperature: 35.2°C  [normal 20–45]
+     pressure:     1.0 bar [normal 0.8–1.5]
+     vibration:    0.8 mm/s [normal 0–2.0]
+     rpm:         120 rpm  [normal 80–150]
+
+   IS-005 (inspection_station) — status: warning
+     temperature: 28.0°C  [normal 18–30]
+     pressure:     1.0 bar [normal 0.8–1.2]
+     vibration:    5.2 mm/s [normal 0–4.0]  ⚠️ ABOVE MAX
+     rpm:        1800 rpm  [normal 1500–2200]
+
+   Detect all anomalies, then diagnose root causes and recommend remediation for affected machines.
    ```
+
 3. Watch the steps execute in sequence — anomaly scan first, then fault diagnosis
 4. Review the final consolidated report
 

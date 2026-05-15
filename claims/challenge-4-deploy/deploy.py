@@ -269,61 +269,166 @@ def print_claims_report(report: dict):
     print("=" * 60)
 
 
-def run_portal_workflow(
-    workflow_name: str,
-    query: str = "Process all insurance claims: CLM-001, CLM-002, CLM-003, CLM-004, CLM-005.",
-) -> str:
+def create_workflow_agent(workflow_agent_name: str = "claims-processing-workflow") -> str:
     """
-    Invoke a workflow agent created in the Foundry portal.
+    Create a workflow agent via the SDK using WorkflowAgentDefinition.
 
-    The response is streamed so you can observe each workflow step as it runs.
+    The workflow appears in the Foundry portal under Build → Agents (kind: workflow).
+    Requires allow_preview=True on AIProjectClient.
 
-    Before calling this:
-      1. Open the Foundry portal -> Build -> Workflows -> New workflow
-      2. Add the claims-triage-agent and claims-decision-agent as steps
-      3. Deploy it and note the agent name
-      4. Set WORKFLOW_AGENT_NAME=<name> in your .env file
+    Note: WorkflowAgentDefinition agents are visible in the Foundry portal
+    and can be invoked from the portal UI. Programmatic invocation via the
+    Responses API returns a 'wfresp_' tracking object.
 
     Returns:
-        The workflow's final text output.
+        The workflow agent name.
     """
+    from azure.ai.projects import AIProjectClient
+    from azure.ai.projects.models import WorkflowAgentDefinition
+    from azure.identity import DefaultAzureCredential
+
+    client = AIProjectClient(
+        endpoint=PROJECT_CONNECTION_STRING,
+        credential=DefaultAzureCredential(),
+        allow_preview=True,
+    )
+
+    # Exact portal YAML format: flat InvokeAzureAgent actions with agent.name,
+    # conversationId, input/output, and a final EndConversation action.
+    workflow_yaml = (
+        "kind: Workflow\n"
+        f"name: {workflow_agent_name}\n"
+        "description: ClaimSight insurance claims processing - triage then decide\n"
+        "trigger:\n"
+        "  kind: OnConversationStart\n"
+        "  id: trigger_start\n"
+        "  actions:\n"
+        "    - kind: InvokeAzureAgent\n"
+        "      id: step_triage\n"
+        "      agent:\n"
+        "        name: claims-triage-agent\n"
+        "      conversationId: =System.ConversationId\n"
+        "      input:\n"
+        '        messages: ""\n'
+        "      output:\n"
+        "        autoSend: true\n"
+        "    - kind: InvokeAzureAgent\n"
+        "      id: step_decide\n"
+        "      agent:\n"
+        "        name: claims-decision-agent\n"
+        "      conversationId: =System.ConversationId\n"
+        "      input:\n"
+        '        messages: ""\n'
+        "      output:\n"
+        "        autoSend: true\n"
+        "    - kind: EndConversation\n"
+        "      id: step_end\n"
+    )
+
+    existing_names = {a.name for a in client.agents.list()}
+    if workflow_agent_name in existing_names:
+        result = client.agents.create_version(
+            agent_name=workflow_agent_name,
+            definition=WorkflowAgentDefinition(workflow=workflow_yaml),
+            description="ClaimSight insurance claims workflow (SDK-created)",
+        )
+        print(f"  Updated workflow agent: {result.name} (version {result.version})")
+    else:
+        result = client.agents.create_version(
+            agent_name=workflow_agent_name,
+            definition=WorkflowAgentDefinition(workflow=workflow_yaml),
+            description="ClaimSight insurance claims workflow (SDK-created)",
+        )
+        print(f"  Created workflow agent: {result.name} (version {result.version})")
+    print(f"  Visible in Foundry portal → Build → Agents (kind: workflow)")
+    client.close()
+    return result.name
+
+
+def run_portal_workflow(workflow_name: str) -> str:
+    """
+    Invoke a WorkflowAgentDefinition agent via the Responses API.
+
+    Embeds the claims data directly in the input so the claims-triage-agent
+    can process all claims without needing to call the assess_claim tool
+    (workflow steps cannot handle function-call loops). Both agents execute
+    sequentially.
+
+    Returns:
+        The workflow's combined text output.
+    """
+    import time
     from azure.ai.projects import AIProjectClient
     from azure.identity import DefaultAzureCredential
 
     client = AIProjectClient(
         endpoint=PROJECT_CONNECTION_STRING,
         credential=DefaultAzureCredential(),
+        allow_preview=True,
     )
     openai_client = client.get_openai_client()
 
+    print(f"\n=== Portal Workflow: {workflow_name} ===")
+
+    portal_base = PROJECT_CONNECTION_STRING.split("/api/projects/")[0] if "/api/projects/" in PROJECT_CONNECTION_STRING else ""
+    if portal_base:
+        print(f"\n  View in Foundry portal:")
+        print(f"  {portal_base.replace('services.ai.azure.com', 'ai.azure.com')}/build/agents")
+
+    print(f"\n  Workflow steps:")
+    print(f"    1. claims-triage-agent    — triage claims for completeness and fraud indicators")
+    print(f"    2. claims-decision-agent  — make approval/denial decisions for triaged claims")
+
+    # Embed claims data in the input so agents don't need tool calls.
+    # The claims-triage-agent is instructed to call assess_claim per claim,
+    # but workflow steps cannot handle function-call loops. We provide all claim
+    # details upfront and explicitly instruct the agent to work from the provided data.
+    with open(CLAIMS_DATA_PATH, "r") as f:
+        claims_data = json.load(f)
+    claims_text = json.dumps(claims_data["claims"], indent=2)
+    query = (
+        "All claims data for today is provided below — do NOT call assess_claim. "
+        "Analyse the data directly from this message.\n\n"
+        + claims_text
+        + "\n\nFor each claim, assess completeness, check for fraud indicators, and "
+        "classify risk (normal/warning/critical). Then make a clear approval or denial "
+        "decision for each claim with justification."
+    )
+
     conversation = openai_client.conversations.create()
-    print(f"\n=== Invoking Portal Workflow: {workflow_name} ===")
-    print(f"Conversation ID: {conversation.id}")
+    print(f"\n  Submitting workflow run (background)...")
 
-    final_output = ""
-
-    stream = openai_client.responses.create(
+    resp = openai_client.responses.create(
         conversation=conversation.id,
         extra_body={"agent_reference": {"name": workflow_name, "type": "agent_reference"}},
         input=query,
-        stream=True,
-        metadata={"x-ms-debug-mode-enabled": "1"},
+        background=True,
     )
+    print(f"  Response ID : {resp.id}")
+    print(f"  Initial status: {resp.status}")
 
-    for event in stream:
-        if event.type == "response.output_item.added" and hasattr(event, "item") and getattr(event.item, "type", "") == "workflow_action":
-            print(f"\n  --> Step: {event.item.action_id}")
-        elif event.type == "response.output_item.done" and hasattr(event, "item") and getattr(event.item, "type", "") == "workflow_action":
-            print(f"      [{getattr(event.item, 'status', 'done')}] {event.item.action_id}")
-        elif event.type == "response.output_text.delta":
-            print(event.delta, end="", flush=True)
-        elif event.type == "response.output_text.done":
-            final_output = event.text
-            print()  # newline after streamed text
+    output_text = ""
+    for attempt in range(12):
+        time.sleep(8)
+        r = openai_client.responses.retrieve(resp.id)
+        tokens = getattr(r.usage, "total_tokens", 0)
+        print(f"  [{attempt + 1}] status={r.status}  tokens={tokens}")
+        if r.status in ("completed", "failed", "cancelled"):
+            output_text = r.output_text
+            break
+
+    if output_text:
+        print("\nWorkflow output:")
+        print(output_text)
+    else:
+        print(
+            "\n  Note: Workflow invocation returned no text output via the API.\n"
+            "  The agent is deployed and visible in Foundry portal → Build → Agents."
+        )
 
     openai_client.conversations.delete(conversation_id=conversation.id)
     client.close()
-    return final_output
+    return output_text
 
 
 def main():
@@ -338,17 +443,24 @@ def main():
 
     print("\nWorkflow complete! Agents remain deployed for future runs.")
 
-    # --- Part B: Portal workflow (create in Foundry portal, invoke via streaming) ---
-    if WORKFLOW_AGENT_NAME:
-        print("\n" + "=" * 60)
-        print("PORTAL WORKFLOW")
-        print("=" * 60)
-        output = run_portal_workflow(WORKFLOW_AGENT_NAME)
-        print("\nPortal workflow output:")
-        print(output)
-    else:
-        print("\nTip: Create a workflow in the Foundry portal and set")
-        print("     WORKFLOW_AGENT_NAME=<name> in .env to invoke it here.")
+    # --- Part B: SDK workflow creation + portal invocation ---
+    print("\n" + "=" * 60)
+    print("CREATING WORKFLOW AGENT VIA SDK")
+    print("=" * 60)
+    workflow_name = WORKFLOW_AGENT_NAME if WORKFLOW_AGENT_NAME and not WORKFLOW_AGENT_NAME.startswith("<") else "claims-processing-workflow"
+    workflow_name = create_workflow_agent(workflow_agent_name=workflow_name)
+
+    print("\n" + "=" * 60)
+    print("INVOKING WORKFLOW (BACKGROUND POLL)")
+    print("=" * 60)
+    run_portal_workflow(workflow_name)
+
+    print("\n" + "=" * 60)
+    print("CHALLENGE 4 COMPLETE")
+    print("=" * 60)
+    print("  Part A: Multi-agent SDK orchestration  ✓")
+    print(f"  Part B: Workflow agent deployed        ✓  ({workflow_name})")
+    print("          → View in Foundry portal → Build → Agents")
 
 
 if __name__ == "__main__":

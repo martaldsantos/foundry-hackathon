@@ -89,13 +89,70 @@ CLAIMSIGHT INSURANCE — CLAIMS PROCESSING REPORT
 
 ### Step 4: Invoke from Python
 
-Set `WORKFLOW_AGENT_NAME=<your-workflow-name>` in `.env`, then re-run:
+Set `WORKFLOW_AGENT_NAME=claims-processing-workflow` in `.env`, then re-run:
 
 ```bash
 python deploy.py
 ```
 
-The portal workflow will execute with streaming output showing each step.
+The portal workflow will execute and print results to the terminal.
+
+### Step 5: Test the workflow in the portal playground
+
+> **Why you must include the claims data in your message**
+>
+> The agents use an `assess_claim` tool that reads from a local Python file.
+> The portal playground **cannot execute Python functions** — if you send a generic
+> prompt, the agent will try to call the tool and stall waiting for a result that
+> never arrives. Paste the claims data directly into your message so the agents can
+> work without needing the tool.
+
+1. Open **claims-processing-workflow** → **Playground**
+2. Paste the following message (data is pre-embedded so no tool calls are needed):
+
+   ```
+   All claims data for today is below — analyse it directly, do not call assess_claim.
+
+   CLM-001 | Maria Torres | auto_collision | filed 2026-05-01 | status: critical
+     completeness: 100%  [min 80%] ✅
+     damage_vs_estimate_match: 52%  [min 70%] 🔴 BELOW MIN
+     fraud_risk_score: 82  [max 50] 🔴 ABOVE MAX
+     policy_coverage_match: 95%  [min 85%] ✅
+     documents: police_report, photos, repair_estimate, medical_report
+
+   CLM-002 | James Chen | property_water_damage | filed 2026-04-28 | status: normal
+     completeness: 100%  [min 80%] ✅
+     damage_vs_estimate_match: 88%  [min 70%] ✅
+     fraud_risk_score: 15  [max 50] ✅
+     policy_coverage_match: 98%  [min 85%] ✅
+     documents: photos, plumber_report, repair_estimate, inventory_list
+
+   CLM-003 | Robert Kim | auto_theft | filed 2026-05-03 | status: warning
+     completeness: 60%  [min 80%] ⚠️ BELOW MIN
+     damage_vs_estimate_match: 0%  [min 70%] ⚠️ BELOW MIN
+     fraud_risk_score: 45  [max 50] ✅
+     policy_coverage_match: 90%  [min 85%] ✅
+     documents: police_report, vehicle_registration
+
+   CLM-004 | Sarah Williams | property_fire | filed 2026-04-25 | status: normal
+     completeness: 100%  [min 80%] ✅
+     damage_vs_estimate_match: 91%  [min 70%] ✅
+     fraud_risk_score: 12  [max 50] ✅
+     policy_coverage_match: 100%  [min 85%] ✅
+     documents: fire_department_report, photos, repair_estimate, inventory_list
+
+   CLM-005 | David Okafor | auto_collision | filed 2026-05-05 | status: warning
+     completeness: 85%  [min 80%] ✅
+     damage_vs_estimate_match: 64%  [min 70%] ⚠️ BELOW MIN
+     fraud_risk_score: 58  [max 50] ⚠️ ABOVE MAX
+     policy_coverage_match: 92%  [min 85%] ✅
+     documents: police_report, photos, repair_estimate
+
+   Triage each claim for completeness and fraud indicators, then make an approval or denial decision for each with clear justification.
+   ```
+
+3. Watch the steps execute in sequence — triage first, then decisions
+4. Review the approval/denial decisions with justifications
 
 ## Success Criteria
 

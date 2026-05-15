@@ -262,61 +262,175 @@ def print_shift_report(report: dict):
     print("=" * 60)
 
 
-def run_portal_workflow(
-    workflow_name: str,
-    query: str = "Classify and resolve all incoming calls: CALL-001 through CALL-007. Prioritize security concerns and high-retention-risk customers.",
-) -> str:
+def create_workflow_agent(workflow_agent_name: str = "callcenter-triage-workflow") -> str:
     """
-    Invoke a workflow agent created in the Foundry portal.
+    Create a workflow agent via the SDK using WorkflowAgentDefinition.
 
-    The response is streamed so you can observe each workflow step as it runs.
+    This is the SDK alternative to building a workflow in the Foundry portal UI.
+    The workflow appears in the Foundry portal under Build → Agents (kind: workflow).
 
-    Before calling this:
-      1. Open the Foundry portal -> Build -> Workflows -> New workflow
-      2. Add the intent-classification-agent and resolution-advisor-agent as steps
-      3. Deploy it and note the agent name
-      4. Set WORKFLOW_AGENT_NAME=<name> in your .env file
+    Requires allow_preview=True on AIProjectClient.
+
+    Workflow YAML format (CSDL):
+        kind: Workflow          ← required root element (PascalCase)
+        model: <deployment>     ← orchestrator model
+        description: ...
+        steps:
+          - id: <step_id>
+            agentName: <agent-name>   ← camelCase
+            description: ...
+            dependsOn:                ← optional list of step ids
+              - <other_step_id>
+
+    Note: WorkflowAgentDefinition agents are visible in the Foundry portal
+    (Build → Agents) and can be invoked from the portal UI. Programmatic
+    invocation via the Responses API returns a 'wfresp_' object; results
+    appear in the portal conversation view.
 
     Returns:
-        The workflow's final text output.
+        The workflow agent name.
     """
+    from azure.ai.projects import AIProjectClient
+    from azure.ai.projects.models import WorkflowAgentDefinition
+    from azure.identity import DefaultAzureCredential
+
+    client = AIProjectClient(
+        endpoint=PROJECT_CONNECTION_STRING,
+        credential=DefaultAzureCredential(),
+        allow_preview=True,  # Required for WorkflowAgentDefinition
+    )
+
+    # Exact portal YAML format: flat InvokeAzureAgent actions with agent.name,
+    # conversationId, input/output, and a final EndConversation action.
+    workflow_yaml = (
+        "kind: Workflow\n"
+        f"name: {workflow_agent_name}\n"
+        "description: NovaTel call center triage - classify all calls then recommend resolutions\n"
+        "trigger:\n"
+        "  kind: OnConversationStart\n"
+        "  id: trigger_start\n"
+        "  actions:\n"
+        "    - kind: InvokeAzureAgent\n"
+        "      id: step_classify\n"
+        "      agent:\n"
+        "        name: intent-classification-agent\n"
+        "      conversationId: =System.ConversationId\n"
+        "      input:\n"
+        '        messages: ""\n'
+        "      output:\n"
+        "        autoSend: true\n"
+        "    - kind: InvokeAzureAgent\n"
+        "      id: step_resolve\n"
+        "      agent:\n"
+        "        name: resolution-advisor-agent\n"
+        "      conversationId: =System.ConversationId\n"
+        "      input:\n"
+        '        messages: ""\n'
+        "      output:\n"
+        "        autoSend: true\n"
+        "    - kind: EndConversation\n"
+        "      id: step_end\n"
+    )
+
+    existing_names = {a.name for a in client.agents.list()}
+    if workflow_agent_name in existing_names:
+        # Update existing agent with correct YAML format
+        result = client.agents.create_version(
+            agent_name=workflow_agent_name,
+            definition=WorkflowAgentDefinition(workflow=workflow_yaml),
+            description="NovaTel call center triage workflow (SDK-created)",
+        )
+        print(f"  Updated workflow agent: {result.name} (version {result.version})")
+    else:
+        result = client.agents.create_version(
+            agent_name=workflow_agent_name,
+            definition=WorkflowAgentDefinition(workflow=workflow_yaml),
+            description="NovaTel call center triage workflow (SDK-created)",
+        )
+        print(f"  Created workflow agent: {result.name} (version {result.version})")
+    print(f"  Visible in Foundry portal → Build → Agents (kind: workflow)")
+    client.close()
+    return result.name
+
+
+def run_portal_workflow(workflow_name: str) -> str:
+    """
+    Invoke a WorkflowAgentDefinition agent via the Responses API.
+
+    Embeds the call data directly in the input so the intent-classification-agent
+    can classify without needing to call the lookup_customer tool (workflow steps
+    cannot handle function-call loops). Both agents execute sequentially.
+
+    Returns:
+        The workflow's combined text output.
+    """
+    import time
     from azure.ai.projects import AIProjectClient
     from azure.identity import DefaultAzureCredential
 
     client = AIProjectClient(
         endpoint=PROJECT_CONNECTION_STRING,
         credential=DefaultAzureCredential(),
+        allow_preview=True,
     )
     openai_client = client.get_openai_client()
 
+    print(f"\n=== Portal Workflow: {workflow_name} ===")
+
+    portal_base = PROJECT_CONNECTION_STRING.split("/api/projects/")[0] if "/api/projects/" in PROJECT_CONNECTION_STRING else ""
+    if portal_base:
+        print(f"\n  View in Foundry portal:")
+        print(f"  {portal_base.replace('services.ai.azure.com', 'ai.azure.com')}/build/agents")
+
+    print(f"\n  Workflow steps:")
+    print(f"    1. intent-classification-agent  — classify all calls by intent, priority, sentiment")
+    print(f"    2. resolution-advisor-agent     — recommend resolution for high-priority calls")
+
+    # Embed call data in the input so agents don't need tool calls
+    with open(CALL_DATA_PATH, "r") as f:
+        call_data = json.load(f)
+    calls_text = json.dumps(call_data["calls"], indent=2)
+    query = (
+        "Here is the complete call center data for today:\n\n"
+        + calls_text
+        + "\n\nClassify all calls by intent, priority, sentiment, and retention risk. "
+        "Then recommend resolution strategies for high-priority and security calls."
+    )
+
     conversation = openai_client.conversations.create()
-    print(f"\n=== Invoking Portal Workflow: {workflow_name} ===")
-    print(f"Conversation ID: {conversation.id}")
+    print(f"\n  Submitting workflow run (background)...")
 
-    final_output = ""
-
-    stream = openai_client.responses.create(
+    resp = openai_client.responses.create(
         conversation=conversation.id,
         extra_body={"agent_reference": {"name": workflow_name, "type": "agent_reference"}},
         input=query,
-        stream=True,
-        metadata={"x-ms-debug-mode-enabled": "1"},
+        background=True,
     )
+    print(f"  Response ID : {resp.id}")
+    print(f"  Initial status: {resp.status}")
 
-    for event in stream:
-        if event.type == "response.output_item.added" and hasattr(event, "item") and getattr(event.item, "type", "") == "workflow_action":
-            print(f"\n  --> Step: {event.item.action_id}")
-        elif event.type == "response.output_item.done" and hasattr(event, "item") and getattr(event.item, "type", "") == "workflow_action":
-            print(f"      [{getattr(event.item, 'status', 'done')}] {event.item.action_id}")
-        elif event.type == "response.output_text.delta":
-            print(event.delta, end="", flush=True)
-        elif event.type == "response.output_text.done":
-            final_output = event.text
-            print()
+    output_text = ""
+    for attempt in range(12):
+        time.sleep(8)
+        r = openai_client.responses.retrieve(resp.id)
+        tokens = getattr(r.usage, "total_tokens", 0)
+        print(f"  [{attempt + 1}] status={r.status}  tokens={tokens}")
+        if r.status in ("completed", "failed", "cancelled"):
+            output_text = r.output_text
+            break
+
+    if output_text:
+        print("\nWorkflow output:")
+        print(output_text)
+    else:
+        print(
+            "\n  Note: Workflow invocation returned no text output via the API.\n"
+            "  The agent is deployed and visible in Foundry portal → Build → Agents."
+        )
 
     openai_client.conversations.delete(conversation_id=conversation.id)
     client.close()
-    return final_output
+    return output_text
 
 
 def main():
@@ -331,17 +445,25 @@ def main():
 
     print("\nWorkflow complete! Agents remain deployed for future runs.")
 
-    # --- Part B: Portal workflow (create in Foundry portal, invoke via streaming) ---
-    if WORKFLOW_AGENT_NAME:
-        print("\n" + "=" * 60)
-        print("PORTAL WORKFLOW")
-        print("=" * 60)
-        output = run_portal_workflow(WORKFLOW_AGENT_NAME)
-        print("\nPortal workflow output:")
-        print(output)
-    else:
-        print("\nTip: Create a workflow in the Foundry portal and set")
-        print("     WORKFLOW_AGENT_NAME=<name> in .env to invoke it here.")
+    # --- Part B: SDK workflow creation + portal invocation ---
+    print("\n" + "=" * 60)
+    print("CREATING WORKFLOW AGENT VIA SDK")
+    print("=" * 60)
+    # Use WORKFLOW_AGENT_NAME from .env, or create a new one if not set / malformed
+    workflow_name = WORKFLOW_AGENT_NAME if WORKFLOW_AGENT_NAME and not WORKFLOW_AGENT_NAME.startswith("<") else "callcenter-triage-workflow"
+    workflow_name = create_workflow_agent(workflow_agent_name=workflow_name)
+
+    print("\n" + "=" * 60)
+    print("INVOKING WORKFLOW (BACKGROUND POLL)")
+    print("=" * 60)
+    run_portal_workflow(workflow_name)
+
+    print("\n" + "=" * 60)
+    print("CHALLENGE 4 COMPLETE")
+    print("=" * 60)
+    print("  Part A: Multi-agent SDK orchestration  ✓")
+    print(f"  Part B: Workflow agent deployed        ✓  ({workflow_name})")
+    print("          → View in Foundry portal → Build → Agents")
 
 
 if __name__ == "__main__":
