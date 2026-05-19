@@ -84,7 +84,7 @@ NOVATEL CALL CENTER — SHIFT REPORT
 
 ### Step 3: Verify agents are deployed in the portal
 
-1. Open [https://ai.azure.com](https://ai.azure.com) (ensure **New Foundry** toggle is **On**)
+1. Open the [Microsoft Foundry portal](https://ai.azure.com/nextgen)
 2. Select your project
 3. Left sidebar → **Build** → **Agents**
 4. Confirm both agents appear:
@@ -120,7 +120,7 @@ NOVATEL CALL CENTER — SHIFT REPORT
 
 ### Step 6: Build the workflow in the portal designer
 
-1. Left sidebar → **Build** → **Workflows** → **+ New workflow**
+1. Left sidebar → **Build** → **Agents** → **Workflows** → **Create** → **Sequential**
 2. In the visual designer:
    - **+ Add step** → Agent → `intent-classification-agent`
      - Input: `Classify all incoming calls and identify any critical or high-priority items.`

@@ -28,6 +28,12 @@ OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
 APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=xxx;...
 ```
 
+## Connect Application Insights to the Portal
+
+The deploy script automatically links Application Insights to your Foundry project. To confirm it worked, open the [Microsoft Foundry portal](https://ai.azure.com/nextgen), navigate to your project, and click **Tracing** in the left sidebar — you should see the Application Insights resource already connected.
+
+If you see a **"Create or connect an App Insights resource to get started"** banner, the automatic connection was blocked by a tenant policy. Fix it in one click: click **Connect**, select the `foundry-hack-insights-<suffix>` resource from the dropdown, and confirm. You only need to do this once.
+
 ## Get Started
 
 Open [monitor.py](./monitor.py) and review the tracing setup.
@@ -36,6 +42,48 @@ Open [monitor.py](./monitor.py) and review the tracing setup.
 cd callcenter/challenge-2-monitor
 python monitor.py
 ```
+
+Once the script finishes, your traces are live. Use either portal to explore them.
+
+---
+
+### Option A: Microsoft Foundry Portal
+
+1. Go to [foundry.microsoft.com](https://ai.azure.com/nextgen) → open your project
+2. Left sidebar → **Tracing**
+3. You'll see a list of recent traces — click any row to open it
+4. Inside a trace you can see:
+   - Each **agent turn** as a span (input → output)
+   - **Tool calls** (`check_account_history`, etc.) as child spans with inputs/outputs
+   - **Token usage** and **latency** per span
+   - The full model prompt and completion if `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true`
+5. Use the **timeline view** to spot slow spans, and the **details panel** to inspect individual messages
+
+---
+
+### Option B: Azure Portal — Application Insights
+
+1. Go to [portal.azure.com](https://portal.azure.com) → search for **Application Insights** → open `foundry-hack-insights-<suffix>`
+2. Left sidebar → **Investigate** → **Transaction search**
+3. Set the time range to **Last 30 minutes** and click **Search** — you'll see individual trace events
+4. For a richer view: left sidebar → **Investigate** → **Performance**
+   - Shows operation durations, percentiles, and outliers
+5. For end-to-end traces: click any operation → **Drill into** → **End-to-end transaction details**
+   - This renders the full Gantt chart of spans for a single agent run
+6. To write custom queries: left sidebar → **Monitoring** → **Logs**
+   - Try this starter query to see all GenAI traces:
+   ```kusto
+   traces
+   | where timestamp > ago(1h)
+   | where message contains "gen_ai"
+   | project timestamp, message, severityLevel, customDimensions
+   | order by timestamp desc
+   ```
+
+---
+
+
+
 
 ## Success Criteria
 

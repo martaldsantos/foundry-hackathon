@@ -76,28 +76,44 @@ CLAIMSIGHT INSURANCE — CLAIMS PROCESSING REPORT
 
 ---
 
-## Part 2 — Portal: Build the Workflow Visually
+## Part 2 — Portal: Build and Test the Visual Workflow
 
-### Step 3: Create the workflow in Foundry portal
+### Step 3: Verify agents are deployed in the portal
 
-1. Open the [Microsoft Foundry portal](https://ai.azure.com)
-2. Navigate to **Build** → **Workflows** → **New workflow**
-3. Add two steps:
+1. Open the [Microsoft Foundry portal](https://ai.azure.com/nextgen)
+2. Select your project
+3. Left sidebar → **Build** → **Agents**
+4. Confirm both agents appear:
+   - `claims-triage-agent`
+   - `claims-decision-agent`
+
+### Step 4: Test the Claims Triage Agent
+
+1. Click **claims-triage-agent** → **Playground**
+2. Send:
+   ```
+   Assess CLM-001 and CLM-003. What flags do you find?
+   ```
+3. The agent will call `assess_claim` for each claim and return a triage report
+
+### Step 5: Test the Claims Decision Agent
+
+1. Click **claims-decision-agent** → **Playground**
+2. Send:
+   ```
+   CLM-001 is flagged: fraud_risk_score 82 (above max 50), damage_vs_estimate_match 52% (below min 70%). Recommend an action.
+   ```
+3. The agent should recommend denial or escalation with justification
+
+### Step 6: Build the workflow in the portal designer
+
+1. Left sidebar → **Build** → **Workflows** → **New workflow**
+2. Add two steps:
    - Step 1: `claims-triage-agent` — "Assess all claims and report flags"
    - Step 2: `claims-decision-agent` — "For each flagged claim, recommend an action"
-4. Deploy the workflow and note the agent name
+3. Deploy the workflow and note the agent name
 
-### Step 4: Invoke from Python
-
-Set `WORKFLOW_AGENT_NAME=claims-processing-workflow` in `.env`, then re-run:
-
-```bash
-python deploy.py
-```
-
-The portal workflow will execute and print results to the terminal.
-
-### Step 5: Test the workflow in the portal playground
+### Step 7: Test the workflow in the portal playground
 
 > **Why you must include the claims data in your message**
 >
@@ -154,12 +170,38 @@ The portal workflow will execute and print results to the terminal.
 3. Watch the steps execute in sequence — triage first, then decisions
 4. Review the approval/denial decisions with justifications
 
+### Step 8: Invoke the portal workflow from Python (streaming)
+
+Set `WORKFLOW_AGENT_NAME=claims-processing-workflow` in `.env`, then re-run:
+
+```bash
+python deploy.py
+```
+
+The script will stream `workflow_action` events as the workflow executes each step:
+
+```
+[workflow] Starting step: claims-triage-agent
+[workflow] Completed step: claims-triage-agent
+[workflow] Starting step: claims-decision-agent
+[workflow] Completed step: claims-decision-agent
+<final report streamed here>
+```
+
+### Step 9: View run history and traces
+
+1. Portal → your workflow → **Run history** tab
+2. Click the latest run to see the execution timeline — each step, duration, and output
+3. Left sidebar → **Operate** → **Tracing** to see the full distributed trace across both agent conversations
+
+---
+
 ## Success Criteria
 
-- [ ] Both agents deployed and visible in the Foundry portal
-- [ ] Python workflow produces a consolidated claims report
-- [ ] Portal workflow executes and streams results
-- [ ] You can see the workflow run history in the portal
+- [ ] Python workflow runs end-to-end: triage → decisions → claims report
+- [ ] Both agents visible in the Foundry portal as persistent assets
+- [ ] Visual workflow created in the portal and tested in its playground
+- [ ] Portal workflow invoked from Python with live step streaming
 
 ---
 
@@ -222,3 +264,4 @@ Integrate evaluation into your deployment pipeline:
 | App Service / Containers | Custom auth, middleware, webhooks |
 | Azure Functions | Event-driven, pay-per-use, document processing |
 | CI/CD Gates | Automated quality assurance before promotion |
+

@@ -27,6 +27,8 @@ cd callcenter/challenge-1-build
 python agents.py
 ```
 
+As the script runs, watch the terminal closely — you'll see each agent being created, then each call from `call_data.json` being sent through the **Intent Classification Agent** first, and its output handed off to the **Resolution Advisor Agent**. You'll see the raw agent responses printed for every call, giving you a live view of how the two agents collaborate. Once it completes, head to the [Microsoft Foundry portal](https://ai.azure.com/nextgen), open your project, and navigate to **Agents** in the left sidebar — hit **Refresh** if the agents don't appear immediately, as it can take a few seconds for newly created agents to show up in the portal.
+
 ## Success Criteria
 
 - [ ] Intent Classification Agent correctly identifies all 6 intent types across 7 calls

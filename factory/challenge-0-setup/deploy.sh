@@ -8,20 +8,22 @@ set -euo pipefail
 # =============================================================================
 
 # --- Configuration -----------------------------------------------------------
-RESOURCE_GROUP="${RESOURCE_GROUP:-foundry-hackathon-rg}"
+SUFFIX="${SUFFIX:-$(openssl rand -hex 4)}"
+RESOURCE_GROUP="${RESOURCE_GROUP:-foundry-hackathon-rg-$SUFFIX}"
 LOCATION="${LOCATION:-swedencentral}"
-FOUNDRY_RESOURCE_NAME="${FOUNDRY_RESOURCE_NAME:-foundry-hack-$(openssl rand -hex 4)}"
-PROJECT_NAME="${PROJECT_NAME:-tire-factory-project}"
+FOUNDRY_RESOURCE_NAME="${FOUNDRY_RESOURCE_NAME:-foundry-hack-$SUFFIX}"
+PROJECT_NAME="${PROJECT_NAME:-factory-project}"
 MODEL_DEPLOYMENT_NAME="${MODEL_DEPLOYMENT_NAME:-gpt-5.4}"
 MODEL_NAME="${MODEL_NAME:-gpt-5.4}"
 MODEL_VERSION="${MODEL_VERSION:-2026-03-05}"
-LOG_ANALYTICS_NAME="${LOG_ANALYTICS_NAME:-foundry-hack-logs}"
-APP_INSIGHTS_NAME="${APP_INSIGHTS_NAME:-foundry-hack-insights}"
+LOG_ANALYTICS_NAME="${LOG_ANALYTICS_NAME:-foundry-hack-logs-$SUFFIX}"
+APP_INSIGHTS_NAME="${APP_INSIGHTS_NAME:-foundry-hack-insights-$SUFFIX}"
 
 echo "=============================================="
 echo "  Foundry Hackathon — Infrastructure Deploy"
 echo "=============================================="
 echo ""
+echo "Suffix:            $SUFFIX"
 echo "Resource Group:    $RESOURCE_GROUP"
 echo "Location:          $LOCATION"
 echo "Foundry Resource:  $FOUNDRY_RESOURCE_NAME"
@@ -40,15 +42,29 @@ az group create \
 
 # --- AI Foundry Hub ----------------------------------------------------------
 echo ">>> Creating AI Foundry resource (AIServices)..."
-az cognitiveservices account create \
-    --name "$FOUNDRY_RESOURCE_NAME" \
-    --resource-group "$RESOURCE_GROUP" \
-    --kind AIServices \
-    --sku S0 \
-    --location "$LOCATION" \
-    --custom-domain "$FOUNDRY_RESOURCE_NAME" \
-    --disable-local-auth false \
-    --output none
+SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+az rest \
+    --method PUT \
+    --url "https://management.azure.com/subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.CognitiveServices/accounts/$FOUNDRY_RESOURCE_NAME?api-version=2024-10-01" \
+    --body "{\"kind\": \"AIServices\", \"sku\": {\"name\": \"S0\"}, \"location\": \"$LOCATION\", \"properties\": {\"customSubDomainName\": \"$FOUNDRY_RESOURCE_NAME\", \"publicNetworkAccess\": \"Enabled\", \"allowProjectManagement\": true}}" \
+    --output none || true
+
+echo ">>> Waiting for AIServices resource to reach Succeeded state..."
+for i in $(seq 1 36); do
+    PROV_STATE=$(az cognitiveservices account show \
+        --name "$FOUNDRY_RESOURCE_NAME" \
+        --resource-group "$RESOURCE_GROUP" \
+        --query "properties.provisioningState" -o tsv 2>/dev/null || echo "Pending")
+    if [ "$PROV_STATE" = "Succeeded" ]; then
+        echo "    ✓ Provisioning complete."
+        break
+    elif [ "$PROV_STATE" = "Failed" ]; then
+        echo "❌ AIServices resource provisioning failed. Check the Azure portal for details."
+        exit 1
+    fi
+    echo "    State: $PROV_STATE — retrying in 10s... ($i/36)"
+    sleep 10
+done
 
 # Some tenants enforce this with Azure Policy. Try to force-enable key auth and verify.
 FOUNDRY_RESOURCE_ID=$(az cognitiveservices account show \
@@ -61,16 +77,19 @@ az resource update \
     --set properties.disableLocalAuth=false \
     --output none || true
 
+az resource update \
+    --ids "$FOUNDRY_RESOURCE_ID" \
+    --set properties.allowProjectManagement=true \
+    --output none
+
 DISABLE_LOCAL_AUTH=$(az cognitiveservices account show \
     --name "$FOUNDRY_RESOURCE_NAME" \
     --resource-group "$RESOURCE_GROUP" \
     --query properties.disableLocalAuth -o tsv)
 
 if [ "$DISABLE_LOCAL_AUTH" = "true" ]; then
-    echo "❌ API key authentication is still disabled on the Foundry resource."
-    echo "   This is usually enforced by Azure Policy in your tenant/subscription."
-    echo "   Ask an Azure admin to allow local auth or use Entra ID-only evaluation flow."
-    exit 1
+    echo "⚠️  API key authentication is disabled by Azure Policy on this tenant."
+    echo "   The deployment will continue — use DefaultAzureCredential (Entra ID) in your code."
 fi
 
 echo ">>> Creating AI Foundry project..."
@@ -126,7 +145,18 @@ APP_INSIGHTS_INSTRUMENTATION_KEY=$(az monitor app-insights component show \
     --resource-group "$RESOURCE_GROUP" \
     --query instrumentationKey -o tsv)
 
-# --- Retrieve Connection Info ------------------------------------------------
+APP_INSIGHTS_RESOURCE_ID=$(az monitor app-insights component show \
+    --app "$APP_INSIGHTS_NAME" \
+    --resource-group "$RESOURCE_GROUP" \
+    --query id -o tsv)
+
+# --- Connect App Insights to the Foundry project ----------------------------
+echo ">>> Connecting Application Insights to Foundry project..."
+az rest \
+    --method PATCH \
+    --url "https://management.azure.com/subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.CognitiveServices/accounts/$FOUNDRY_RESOURCE_NAME/projects/$PROJECT_NAME?api-version=2024-10-01" \
+    --body "{\"properties\": {\"applicationInsights\": \"$APP_INSIGHTS_RESOURCE_ID\"}}" \
+    --output none || true ------------------------------------------------
 echo ">>> Retrieving Foundry endpoint and keys..."
 FOUNDRY_ENDPOINT=$(az cognitiveservices account show \
     --name "$FOUNDRY_RESOURCE_NAME" \
@@ -138,8 +168,6 @@ PROJECT_CONNECTION_STRING=$(az cognitiveservices account project show \
     --resource-group "$RESOURCE_GROUP" \
     --project-name "$PROJECT_NAME" \
     --query "properties.endpoints.\"AI Foundry API\"" -o tsv)
-
-SUBSCRIPTION_ID=$(az account show --query id -o tsv)
 
 # --- Write .env file ----------------------------------------------------------
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

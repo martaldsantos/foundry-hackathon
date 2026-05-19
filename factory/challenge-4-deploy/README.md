@@ -80,7 +80,7 @@ TIREFORGE FACTORY HEALTH REPORT
 
 ### Step 3: Verify agents are deployed in the portal
 
-1. Open [https://ai.azure.com](https://ai.azure.com) (ensure **New Foundry** toggle is **On**)
+1. Open the [Microsoft Foundry portal](https://ai.azure.com/nextgen)
 2. Select your **tire-factory-project**
 3. Left sidebar → **Build** → **Agents**
 4. Confirm both agents appear:

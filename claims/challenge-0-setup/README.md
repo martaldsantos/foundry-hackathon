@@ -43,10 +43,14 @@ Run everything on your own machine. Requires Python 3.10+ and Azure CLI.
 git clone https://github.com/martaldsantos/foundry-hackathon.git
 cd foundry-hackathon
 
-# 2. Install Python dependencies
+# 2. Create and activate a virtual environment
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# 3. Install Python dependencies
 pip install -r requirements.txt
 
-# 3. Login to Azure
+# 4. Login to Azure
 az login
 ```
 

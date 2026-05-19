@@ -27,8 +27,7 @@ You are modeled after the TireForge Industries foundry-hackathon lab. You know:
 ├── requirements.txt             # Python dependencies (always the same base set)
 ├── challenge-0-setup/
 │   ├── README.md
-│   ├── deploy.sh                # Provisions Azure resources + writes .env
-│   └── retrieve-keys.sh
+│   └── deploy.sh                # Provisions Azure resources + writes .env
 ├── challenge-1-build/
 │   ├── README.md
 │   ├── agents.py                # Two agents with system prompts + tool
