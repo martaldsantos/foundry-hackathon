@@ -25,38 +25,21 @@ Build an AI agent system that:
 | # | Challenge | What You'll Do | Time |
 |---|-----------|---------------|------|
 | 0 | [Setup](./challenge-0-setup/README.md) | Deploy Microsoft Foundry infrastructure | 20 min |
-| 1 | [Build Agents](./challenge-1-build/README.md) | Create Anomaly Detection + Fault Diagnosis agents | 35 min |
+| 1 | [Build Agents](./challenge-1-build/README.md) | Create Anomaly Detection + Fault Diagnosis agents | 30 min |
 | 2 | [Monitor](./challenge-2-monitor/README.md) | Enable GenAI tracing with Application Insights | 20 min |
-| 3 | [Evaluate](./challenge-3-evaluate/README.md) | Run systematic quality evaluations | 25 min |
+| 3 | [Evaluate](./challenge-3-evaluate/README.md) | Run systematic quality evaluations | 30 min |
 | 4 | [Production Workflow](./challenge-4-deploy/README.md) | Multi-agent orchestration + portal workflow | 20 min |
 
-## The Agent Lifecycle
+## Why the Challenges Are in This Order
 
-These four challenges follow the same arc that engineering teams use when taking AI agent systems to production. Each phase builds directly on the previous one — skipping any of them leaves a gap that will surface as an incident in production.
+**Build first.** An agent with a vague system prompt or missing tools will hallucinate plausible-sounding diagnoses. For a tire manufacturing plant, that's not an academic problem — it means maintenance crews chasing phantom faults, or missing real ones until a machine fails mid-shift. The `check_thresholds` tool grounds the Anomaly Agent in actual machine specs, not general LLM knowledge about what "normal" vibration looks like for an extruder.
 
-### 1. Build — Define what your agents can do
+**Then monitor.** When the Fault Diagnosis Agent recommends pulling CP-003 offline, did it actually examine the sensor readings you fed it? Did `check_thresholds` get called, or did the agent reason from context alone? Application Insights traces answer that. Without them, the only signal you have is a machine failure that should have been caught earlier.
 
-Before you can run, monitor, or evaluate anything, you need agents that work. This phase establishes the foundation: each agent gets a **system prompt** that defines its role, constraints, and reasoning approach, plus the **tools** it needs to act on real data rather than guessing from training knowledge alone. An agent with a vague system prompt or missing tools will produce plausible-sounding but wrong answers — no amount of monitoring or evaluation will compensate for a design that was wrong from the start.
+**Then evaluate.** Tracing tells you the agent ran. Evaluation tells you it ran correctly. The curated test dataset gives you a repeatable score to compare before and after any prompt change or model swap — so you catch regressions before they reach the production floor.
 
-For TireForge, this means creating an Anomaly Detection Agent that compares live sensor readings against known thresholds via `check_thresholds`, and a Fault Diagnosis Agent that reasons about root causes from those anomalies and recommends specific maintenance actions.
+**Then deploy.** The portal workflow turns what you built in scripts into something the maintenance team can actually hand off: a stable endpoint, a per-shift factory health report, and a trace history for every diagnosis. That's the gap between a demo and a tool someone will actually trust before scheduling an unplanned maintenance window.
 
-### 2. Monitor — See what’s actually happening
-
-Once your agents are running, you need **observability**. This phase instruments every interaction as a distributed trace — capturing the full reasoning chain from user input through model call, tool invocations, and final response. AI agent failures are often silent: the agent returns a response that looks successful but misclassified, skipped a tool call, or produced a subtly wrong answer. Without traces, these failures are invisible — you have no way to diagnose what went wrong, measure latency regressions after a prompt change, or understand token costs at scale.
-
-### 3. Evaluate — Measure whether outputs are actually correct
-
-Monitoring tells you the agent is *running*. Evaluation tells you it’s doing the *right thing*. This phase runs your agents against a curated dataset of inputs with known expected outputs, then uses an LLM-as-judge to score each response on coherence and relevance. The result is a **repeatable, version-trackable quality score** — something you can compare before and after changing a system prompt, switching models, or adding a new tool. Spot-checking a handful of responses manually doesn’t scale and doesn’t catch regressions.
-
-### 4. Deploy — Orchestrate agents into a production workflow
-
-The final phase graduates you from running individual agents in scripts to building a **multi-agent pipeline** in the Microsoft Foundry portal. The agents are wired together in sequence — the first agent’s output becomes the second agent’s input — and the workflow is exposed as a testable, deployable endpoint with a run history. This is what production looks like: not a script you trigger manually, but an orchestrated system with a stable interface, backed by the monitoring and evaluation infrastructure you built in the previous phases.
-
-For TireForge, this means moving from a script that checks 5 machines to a portal workflow that can scan an entire production floor’s sensor feed, with traces and evaluation scores that maintenance managers can inspect and trust before acting on a fault diagnosis.
-
----
-
-This lifecycle — **Build → Monitor → Evaluate → Deploy** — is the production standard for AI agent systems. By the end of these challenges you’ll have experienced every phase hands-on and have a working, observable, evaluated, and deployed multi-agent system.
 
 ## Architecture
 

@@ -71,19 +71,14 @@ body,
   color: var(--hk-navy);
 }
 
-/* Content area — frosted glass over the gradient */
+/* Content area — transparent, gradient shows through */
 .md-main__inner {
   margin-top: 0;
 }
 
 .md-content {
-  background: var(--hk-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-radius: 16px;
-  padding: 1.5rem;
+  background: transparent;
   margin-top: 1rem;
-  box-shadow: var(--hk-shadow);
 }
 
 /* Sidebar — force transparent so gradient shows through */
@@ -167,6 +162,11 @@ body,
 
 .md-footer-meta {
   background: rgba(13, 27, 53, 0.3);
+}
+
+/* Hide default Material header logo icon */
+.md-header__button.md-logo {
+  display: none;
 }
 
 /* =============================================================

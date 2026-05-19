@@ -38,38 +38,21 @@ All challenges are Python SDK-based. Challenge 4 also walks you through the Foun
 | # | Challenge | Duration | What You'll Do |
 |---|-----------|----------|----------------|
 | 0 | [Setup](./challenge-0-setup/README.md) | 20 min | Provision resources, verify auth |
-| 1 | [Build Agents](./challenge-1-build/README.md) | 35 min | Create claims triage & decision agents |
+| 1 | [Build Agents](./challenge-1-build/README.md) | 30 min | Create claims triage & decision agents |
 | 2 | [Monitor](./challenge-2-monitor/README.md) | 20 min | Enable tracing, explore App Insights |
-| 3 | [Evaluate](./challenge-3-evaluate/README.md) | 25 min | Run evaluations, interpret quality metrics |
+| 3 | [Evaluate](./challenge-3-evaluate/README.md) | 30 min | Run evaluations, interpret quality metrics |
 | 4 | [Workflow](./challenge-4-deploy/README.md) | 20 min | Build a multi-agent workflow: triage → decision → claims report |
 
-## The Agent Lifecycle
+## Why the Challenges Are in This Order
 
-These four challenges follow the same arc that engineering teams use when taking AI agent systems to production. Each phase builds directly on the previous one — skipping any of them leaves a gap that will surface as an incident in production.
+**Build first.** Without precise instructions and real claim data, the agents can't make useful decisions. The Claims Triage Agent without `assess_claim` is pattern-matching on claim descriptions — it has no way to check actual fraud scores, document completeness ratios, or damage-estimate variance. Ambiguous system prompts mean inconsistent decisions: the same risk profile might get approved one day and flagged the next.
 
-### 1. Build — Define what your agents can do
+**Then monitor.** Every decision the Claims Decision Agent makes needs to be traceable. For insurance claims, that's not optional — it's a business and regulatory requirement. Application Insights traces give you a complete record: what data the agent received, which tools it called, and exactly what it recommended. When an auditor asks why CLM-003 was sent for investigation, that trace is your answer.
 
-Before you can run, monitor, or evaluate anything, you need agents that work. This phase establishes the foundation: each agent gets a **system prompt** that defines its role, constraints, and reasoning approach, plus the **tools** it needs to act on real data rather than guessing from training knowledge alone. An agent with a vague system prompt or missing tools will produce plausible-sounding but wrong answers — no amount of monitoring or evaluation will compensate for a design that was wrong from the start.
+**Then evaluate.** Two claims with the same fraud score and document completeness should get the same recommendation. Evaluation gives you a repeatable way to check that they do — and catches it when a prompt update breaks that consistency before it affects real claims.
 
-For ClaimSight, this means creating a Claims Triage Agent that assesses incoming claim metrics against acceptable thresholds via `assess_claim`, and a Claims Decision Agent that translates those risk flags into concrete actions — approve, investigate, request documents, or deny.
+**Then deploy.** The portal workflow connects triage to decision, processes a full claims batch, and produces a report that compliance teams can sign off on. That's the difference between a demo and something you'd put in front of an actual adjuster.
 
-### 2. Monitor — See what’s actually happening
-
-Once your agents are running, you need **observability**. This phase instruments every interaction as a distributed trace — capturing the full reasoning chain from user input through model call, tool invocations, and final response. AI agent failures are often silent: the agent returns a response that looks successful but misclassified, skipped a tool call, or produced a subtly wrong answer. Without traces, these failures are invisible — you have no way to diagnose what went wrong, measure latency regressions after a prompt change, or understand token costs at scale.
-
-### 3. Evaluate — Measure whether outputs are actually correct
-
-Monitoring tells you the agent is *running*. Evaluation tells you it’s doing the *right thing*. This phase runs your agents against a curated dataset of inputs with known expected outputs, then uses an LLM-as-judge to score each response on coherence and relevance. The result is a **repeatable, version-trackable quality score** — something you can compare before and after changing a system prompt, switching models, or updating the policy documents in your knowledge base. Spot-checking a handful of responses manually doesn’t scale and doesn’t catch regressions.
-
-### 4. Deploy — Orchestrate agents into a production workflow
-
-The final phase graduates you from running individual agents in scripts to building a **multi-agent pipeline** in the Microsoft Foundry portal. The agents are wired together in sequence — the first agent’s output becomes the second agent’s input — and the workflow is exposed as a testable, deployable endpoint with a run history. This is what production looks like: not a script you trigger manually, but an orchestrated system with a stable interface, backed by the monitoring and evaluation infrastructure you built in the previous phases.
-
-For ClaimSight, this means moving from a script that triages 5 test claims to a portal workflow that can process an entire claims batch, with full trace history and quality scores that compliance teams and auditors can inspect alongside every approve or deny decision.
-
----
-
-This lifecycle — **Build → Monitor → Evaluate → Deploy** — is the production standard for AI agent systems. By the end of these challenges you’ll have experienced every phase hands-on and have a working, observable, evaluated, and deployed multi-agent system.
 
 ## Architecture
 

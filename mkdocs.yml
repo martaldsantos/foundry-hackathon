@@ -8,20 +8,9 @@ theme:
   name: material
   custom_dir: overrides
   palette:
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: custom
-      accent: custom
-      toggle:
-        icon: material/brightness-7
-        name: Switch to dark mode
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      primary: custom
-      accent: custom
-      toggle:
-        icon: material/brightness-4
-        name: Switch to light mode
+    scheme: default
+    primary: custom
+    accent: custom
   font:
     text: Segoe UI
     code: Cascadia Code

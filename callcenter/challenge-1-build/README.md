@@ -8,7 +8,7 @@ By the end of this challenge, you will have:
 - ✅ A **Resolution Advisor Agent** that recommends optimal handling strategies
 - ✅ Both agents tested against real call center data
 
-Time: ~35 minutes
+Time: ~30 minutes
 
 ## Context
 

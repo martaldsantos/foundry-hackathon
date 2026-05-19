@@ -19,9 +19,9 @@ Every scenario follows the same five challenges:
 | # | Challenge | Duration |
 |---|-----------|----------|
 | 0 | **Setup** — Deploy Microsoft Foundryinfrastructure | 20 min |
-| 1 | **Build Agents** — Create two AI agents with tools | 35 min |
+| 1 | **Build Agents** — Create two AI agents with tools | 30 min |
 | 2 | **Monitor** — Enable GenAI tracing with Application Insights | 20 min |
-| 3 | **Evaluate** — Run systematic quality evaluations | 25 min |
+| 3 | **Evaluate** — Run systematic quality evaluations | 30 min |
 | 4 | **Workflow** — Multi-agent orchestration via the Foundry portal | 20 min |
 
 ## Prerequisites
