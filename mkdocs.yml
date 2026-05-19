@@ -63,7 +63,7 @@ nav:
       - Challenge 2 — Monitor: factory/challenge-2-monitor/README.md
       - Challenge 3 — Evaluate: factory/challenge-3-evaluate/README.md
       - Challenge 4 — Workflow: factory/challenge-4-deploy/README.md
-      - Facilitator Guide: factory/FACILITATOR_GUIDE.md
+      - Wrap Up: factory/wrapup.md
   - 📋 Claims:
       - Overview: claims/README.md
       - Challenge 0 — Setup: claims/challenge-0-setup/README.md
@@ -71,7 +71,7 @@ nav:
       - Challenge 2 — Monitor: claims/challenge-2-monitor/README.md
       - Challenge 3 — Evaluate: claims/challenge-3-evaluate/README.md
       - Challenge 4 — Workflow: claims/challenge-4-deploy/README.md
-      - Facilitator Guide: claims/FACILITATOR_GUIDE.md
+      - Wrap Up: claims/wrapup.md
   - 📞 Call Center:
       - Overview: callcenter/README.md
       - Challenge 0 — Setup: callcenter/challenge-0-setup/README.md
@@ -79,4 +79,4 @@ nav:
       - Challenge 2 — Monitor: callcenter/challenge-2-monitor/README.md
       - Challenge 3 — Evaluate: callcenter/challenge-3-evaluate/README.md
       - Challenge 4 — Workflow: callcenter/challenge-4-deploy/README.md
-      - Facilitator Guide: callcenter/FACILITATOR_GUIDE.md
+      - Wrap Up: callcenter/wrapup.md
