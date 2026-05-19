@@ -252,6 +252,7 @@ Deploy to **App Service** (managed PaaS) or **Container Apps** (auto-scaling con
 ### Option 4: Azure Functions (Event-Driven)
 
 Trigger agent workflows from events:
+
 - **Timer trigger**: Run the factory health check every hour
 - **Service Bus trigger**: Process each anomaly alert as it arrives from IoT Hub
 - **HTTP trigger**: On-demand endpoint for maintenance teams
@@ -261,6 +262,7 @@ Pay-per-execution, scales to zero when idle.
 ### Option 5: CI/CD Quality Gates
 
 Integrate evaluation into your deployment pipeline:
+
 - Run `evaluate.py` on every PR — block merge if quality drops below threshold
 - Promote agent versions: `v1-dev` → `v1-staging` → `v1-prod` after evaluation passes
 - Blue/green: Deploy new version to 10% traffic, compare metrics, then promote

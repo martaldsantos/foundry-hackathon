@@ -3,6 +3,7 @@
 ## Objectives
 
 By the end of this challenge, you will have:
+
 - ✅ A **Claims Triage Agent** that assesses incoming claims and flags risks
 - ✅ A **Claims Decision Agent** that analyzes flagged claims and recommends actions
 - ✅ Both agents tested against real claims data

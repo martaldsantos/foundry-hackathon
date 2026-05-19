@@ -3,6 +3,7 @@
 ## Objectives
 
 By the end of this challenge, you will have:
+
 - ✅ GenAI tracing enabled for your Foundry agents
 - ✅ Agent interactions visible as traces in Application Insights
 - ✅ Understanding of how to debug agent behaviour in production
@@ -14,6 +15,7 @@ Time: ~20 minutes
 Your agents work — but how do you know they're working **well**? What if an agent misclassifies a legitimate claim as fraud? What if latency spikes during peak filing hours? What if a tool call fails silently?
 
 **Application Insights** with **GenAI tracing** gives you:
+
 - Full trace of every agent interaction (user message → model call → tool calls → response)
 - Token usage per request
 - Latency breakdown (network, model inference, tool execution)

@@ -3,6 +3,7 @@
 ## Objectives
 
 By the end of this challenge, you will have:
+
 - ✅ An **Intent Classification Agent** that analyzes call summaries and categorizes customer intent
 - ✅ A **Resolution Advisor Agent** that recommends optimal handling strategies
 - ✅ Both agents tested against real call center data

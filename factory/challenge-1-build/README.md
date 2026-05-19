@@ -3,6 +3,7 @@
 ## Objectives
 
 By the end of this challenge, you will have:
+
 - ✅ An **Anomaly Detection Agent** that monitors sensor data and flags abnormal readings
 - ✅ A **Fault Diagnosis Agent** that analyzes flagged anomalies and recommends maintenance actions
 - ✅ Both agents tested against real sensor data from the factory floor

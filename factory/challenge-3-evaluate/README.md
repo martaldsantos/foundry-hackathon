@@ -3,6 +3,7 @@
 ## Objectives
 
 By the end of this challenge, you will have:
+
 - ✅ Run a systematic evaluation of your agents against a test dataset
 - ✅ Used built-in evaluators (task adherence, coherence) to measure quality
 - ✅ Interpreted evaluation metrics and identified areas for improvement
@@ -19,6 +20,7 @@ You have a dataset of 10 test cases — each with a sensor reading snapshot and 
 ## The Evaluation Dataset
 
 The dataset lives at [challenge-4-deploy/evaluation_dataset.json](../challenge-4-deploy/evaluation_dataset.json) — it contains:
+
 - 10 scenarios covering normal, warning, and critical machines
 - Each has an `input` (what you send to the agent)
 - Each has an `expected_output` (the correct classification and action)

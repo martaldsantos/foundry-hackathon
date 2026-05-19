@@ -5,6 +5,7 @@ Time: ~20 minutes
 ## Objectives
 
 By the end of this challenge, you will have:
+
 - ✅ A fully provisioned Microsoft Foundry project with a deployed model
 - ✅ Application Insights provisioned and connection string available
 - ✅ Verified authentication from your local machine to Foundry
