@@ -77,7 +77,11 @@ body,
 }
 
 .md-content {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
   margin-top: 1rem;
 }
 
@@ -169,145 +173,6 @@ body,
   display: none;
 }
 
-/* =============================================================
-   Hero Section — home page
-   ============================================================= */
-
-.hk-hero {
-  position: relative;
-  min-height: 340px;
-  display: flex;
-  align-items: center;
-  padding: 3.5rem 3rem;
-  overflow: hidden;
-  border-radius: 20px;
-  background: linear-gradient(120deg, #9890CE 0%, #6BA5E8 52%, #5AB8F5 100%);
-  margin-bottom: 2rem;
-  box-shadow: var(--hk-shadow);
-}
-
-/* Left: text block */
-.hk-hero__text {
-  position: relative;
-  z-index: 2;
-  max-width: 48%;
-}
-
-.hk-hero__eyebrow {
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.80);
-  margin: 0 0 0.6rem;
-  font-family: "Segoe UI", SegoeUI, Arial, sans-serif;
-}
-
-.hk-hero__title {
-  font-size: clamp(3rem, 6.5vw, 5.5rem);
-  font-weight: 300;
-  color: #ffffff;
-  line-height: 1.05;
-  margin: 0 0 1.1rem;
-  letter-spacing: -0.02em;
-  font-family: "Segoe UI Light", "Segoe UI", SegoeUI, Arial, sans-serif;
-}
-
-.hk-hero__date {
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.70);
-  margin: 0;
-  font-family: "Segoe UI", SegoeUI, Arial, sans-serif;
-}
-
-/* Right: floating shapes canvas */
-.hk-hero__canvas {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-}
-
-/* Hexagon — upper right */
-.hk-shape--hex {
-  position: absolute;
-  width: 165px;
-  height: 185px;
-  top: 8%;
-  right: 6%;
-  background: radial-gradient(circle at 32% 26%, #88D8FF 0%, #2468D4 52%, #0C3898 100%);
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  filter: drop-shadow(0 14px 30px rgba(12, 56, 152, 0.55));
-}
-
-/* Pill / rod — top right, angled */
-.hk-shape--pill {
-  position: absolute;
-  width: 26px;
-  height: 110px;
-  top: 4%;
-  right: 29%;
-  background: radial-gradient(ellipse at 35% 18%, #90DEFF, #2060D8 55%, #0A3490);
-  border-radius: 999px;
-  transform: rotate(28deg);
-  filter: drop-shadow(0 8px 18px rgba(12, 52, 144, 0.45));
-}
-
-/* Triangle / pyramid — bottom center-right */
-.hk-shape--tri {
-  position: absolute;
-  width: 86px;
-  height: 96px;
-  bottom: 10%;
-  right: 36%;
-  background: radial-gradient(circle at 34% 26%, #72CCFF, #1E58CC 55%, #0A3490);
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  transform: rotate(-7deg);
-  filter: drop-shadow(0 10px 22px rgba(12, 52, 144, 0.50));
-}
-
-/* Wireframe cylinder outline — center right */
-.hk-shape--ring {
-  position: absolute;
-  width: 250px;
-  height: 310px;
-  top: -8%;
-  right: 14%;
-  border: 1.5px solid rgba(255, 255, 255, 0.28);
-  border-radius: 50%;
-  transform: rotate(-18deg) scaleX(0.58);
-}
-
-.hk-shape--ring::before {
-  content: '';
-  position: absolute;
-  inset: 15%;
-  border: 1.5px solid rgba(255, 255, 255, 0.18);
-  border-radius: 50%;
-}
-
-.hk-shape--ring::after {
-  content: '';
-  position: absolute;
-  left: -2px;
-  right: -2px;
-  top: 44%;
-  bottom: 44%;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.22);
-  border-bottom: 1.5px solid rgba(255, 255, 255, 0.22);
-  border-radius: 50%;
-}
-
-/* Responsive: collapse shapes on small screens */
-@media (max-width: 720px) {
-  .hk-hero__canvas { display: none; }
-  .hk-hero__text { max-width: 100%; }
-  .hk-hero { min-height: auto; padding: 2.5rem 1.5rem; }
-}
-
 /* Navigation tabs pills */
 .md-tabs__list {
   gap: 0.25rem;
@@ -329,22 +194,4 @@ body,
   box-shadow: 0 8px 24px rgba(47, 128, 237, 0.3);
 }
 
-/* Dark mode overrides */
-[data-md-color-scheme="slate"] {
-  --md-primary-fg-color: #5aa8ff;
-  --md-primary-fg-color--light: #7bbfff;
-  --md-primary-fg-color--dark: #2f80ed;
-  --md-accent-fg-color: #5aa8ff;
-}
 
-[data-md-color-scheme="slate"] body {
-  background: linear-gradient(180deg, #0d1b2a 0%, #1b2838 100%);
-}
-
-[data-md-color-scheme="slate"] .md-content {
-  background: rgba(20, 35, 55, 0.85);
-}
-
-[data-md-color-scheme="slate"] .md-typeset h2 {
-  border-bottom-color: #5aa8ff;
-}
