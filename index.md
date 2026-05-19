@@ -1,6 +1,6 @@
 # Foundry Lab — Build AI Agents with Azure AI Foundry
 
-A hands-on lab where you build, monitor, evaluate, and orchestrate AI agents using the **Azure AI Foundry SDK**.
+A hands-on lab where you build, monitor, evaluate, and orchestrate AI agents using the **Microsoft FoundrySDK**.
 
 ## Choose Your Scenario
 
@@ -18,7 +18,7 @@ Every scenario follows the same five challenges:
 
 | # | Challenge | Duration |
 |---|-----------|----------|
-| 0 | **Setup** — Deploy Azure AI Foundry infrastructure | 20 min |
+| 0 | **Setup** — Deploy Microsoft Foundryinfrastructure | 20 min |
 | 1 | **Build Agents** — Create two AI agents with tools | 35 min |
 | 2 | **Monitor** — Enable GenAI tracing with Application Insights | 20 min |
 | 3 | **Evaluate** — Run systematic quality evaluations | 25 min |

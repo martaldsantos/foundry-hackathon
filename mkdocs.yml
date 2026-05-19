@@ -1,5 +1,5 @@
 site_name: Foundry Lab — Build AI Agents with Azure AI Foundry
-site_description: A hands-on lab teaching you to build, monitor, evaluate, and orchestrate AI agents using the Azure AI Foundry SDK.
+site_description: A hands-on lab teaching you to build, monitor, evaluate, and orchestrate AI agents using the Microsoft FoundrySDK.
 site_url: https://martaldsantos.github.io/foundry-hackathon/
 repo_url: https://github.com/martaldsantos/foundry-hackathon
 repo_name: martaldsantos/foundry-hackathon
