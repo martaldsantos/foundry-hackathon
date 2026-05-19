@@ -44,15 +44,15 @@ The evaluation dataset has already been prepared for you as [eval_portal.jsonl](
 ### Step 1: Open the Evaluation tab
 
 1. Go to the [Microsoft Foundry portal](https://ai.azure.com/nextgen) → your project
-2. Left sidebar → **Evaluate** → **+ New evaluation**
-3. Name it (e.g. `claims-triage-eval`) → **Next**
+2. On the top bar → **Build** → **Evaluations** → **Create**
 
 ### Step 2: Configure the evaluation
 
-4. Select **Agent** as the evaluation target
-5. Choose `claims-triage-agent` from the dropdown
+3. Select **Agent** as the evaluation target
+4. Choose `claims-triage-agent` from the dropdown
+5. Select **Existing Dataset**
 6. Upload `claims/challenge-3-evaluate/eval_portal.jsonl`
-7. Map the `query` column to the agent input field → **Next**
+7. Map the `query` column to the agent input field → **Next** and leave **gpt-5.4** as the Judge model
 
 ### Step 3: Choose evaluators
 
