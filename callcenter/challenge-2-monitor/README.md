@@ -82,9 +82,6 @@ Once the script finishes, your traces are live. Use either portal to explore the
 
 ---
 
-
-
-
 ## Success Criteria
 
 - [ ] You can see at least one agent trace in Application Insights
