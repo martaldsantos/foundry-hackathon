@@ -1,4 +1,4 @@
-# 📋 Foundry Lab: AI Agents for Insurance Claims Processing
+# 📋 Scenario: AI Agents for Insurance Claims Processing
 
 ## Scenario
 
