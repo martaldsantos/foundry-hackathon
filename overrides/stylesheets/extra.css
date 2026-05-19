@@ -86,9 +86,11 @@ body,
   box-shadow: var(--hk-shadow);
 }
 
-/* Sidebar */
-.md-sidebar {
-  background: transparent;
+/* Sidebar — force transparent so gradient shows through */
+.md-sidebar,
+.md-sidebar__scrollwrap,
+.md-sidebar__inner {
+  background: transparent !important;
 }
 
 .md-nav__link {
