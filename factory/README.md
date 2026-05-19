@@ -80,3 +80,30 @@ This lifecycle — **Build → Monitor → Evaluate → Deploy** — is the prod
 │  └──────────────┘  └───────────────┘  └────────────┘  │
 └─────────────────────────────────────────────────────────┘
 ```
+
+## Next Steps
+
+Completing these challenges gives you a working multi-agent system with observability and evaluation in place. Here are the directions you can take it further:
+
+**Deploy as a hosted agent endpoint**
+Microsoft Foundry can host your agents as persistent, scalable API endpoints — no infrastructure to manage. Once hosted, any system (a SCADA dashboard, a mobile maintenance app, a Slack bot) can send a machine ID and receive a diagnosis in real time, rather than running a Python script manually.
+
+**Add more tools to your agents**
+The `check_thresholds` function in this lab uses local mock data. In production you’d replace it with tools that call real systems:
+- A `fetch_maintenance_history` tool querying your CMMS (e.g. SAP PM, IBM Maximo) for past failures on that machine
+- A `lookup_spare_parts` tool checking inventory availability before recommending a replacement
+- A `create_work_order` tool that automatically opens a ServiceNow ticket when the Fault Diagnosis Agent flags a critical issue
+
+**Build a knowledge base**
+Upload TireForge’s machine manuals, supplier spec sheets, and historical incident reports to a Microsoft Foundry knowledge base. Attach it to the Fault Diagnosis Agent as a File Search tool so its recommendations are grounded in documented procedures rather than general LLM knowledge.
+
+**Integrate evaluations into CI/CD**
+Run your evaluation dataset automatically on every pull request or deployment. If the coherence or relevance score drops below a threshold (e.g. 3.5 out of 5), block the release. This prevents a system prompt edit or model update from silently degrading diagnosis quality in production.
+
+**Explore advanced agent patterns**
+- **Parallelise** the anomaly checks across all 5 machines simultaneously instead of sequentially
+- **Add confidence thresholds** — if the Anomaly Detection Agent is uncertain, escalate to a human operator rather than passing to Fault Diagnosis automatically
+- **Human-in-the-loop** — for critical faults, require a maintenance engineer to approve the recommended action before it triggers a work order
+
+**Fine-tune for your domain**
+Use your evaluation results to identify systematic errors — machines the agent consistently misclassifies or fault types it handles poorly. Use those cases to refine system prompts, add targeted few-shot examples, or fine-tune the underlying model on TireForge-specific sensor patterns.

@@ -80,3 +80,30 @@ This lifecycle — **Build → Monitor → Evaluate → Deploy** — is the prod
 │  └──────────────┘  └───────────────┘  └────────────┘  │
 └─────────────────────────────────────────────────────────┘
 ```
+
+## Next Steps
+
+Completing these challenges gives you a working multi-agent system with observability and evaluation in place. Here are the directions you can take it further:
+
+**Deploy as a hosted agent endpoint**
+Microsoft Foundry can host your agents as persistent, scalable API endpoints — no infrastructure to manage. Once hosted, your telephony platform (Twilio, Genesys, Azure Communication Services) can push live call transcripts directly to the Intent Classification Agent and receive triage decisions in real time, replacing manual queue review.
+
+**Add more tools to your agents**
+The `lookup_customer` function in this lab uses local mock data. In production you’d replace it with tools that call real systems:
+- A `fetch_crm_history` tool querying Salesforce or Dynamics 365 for the customer’s full interaction history
+- A `check_active_offers` tool pulling current retention promotions and eligibility rules from a pricing API
+- A `create_case` tool that automatically opens a CRM ticket and assigns it to the right queue based on the Resolution Advisor’s recommendation
+
+**Build a knowledge base**
+Upload NovaTel’s customer service policy manual, resolution scripts, and product documentation to a Microsoft Foundry knowledge base. Attach it to the Resolution Advisor Agent as a File Search tool so its scripts are grounded in the actual approved playbook — not a hallucinated version of it.
+
+**Integrate evaluations into CI/CD**
+Run your evaluation dataset automatically on every pull request or deployment. If the coherence or relevance score drops below a threshold (e.g. 3.5 out of 5), block the release. This prevents a system prompt edit or model update from silently degrading classification accuracy during peak call hours.
+
+**Explore advanced agent patterns**
+- **Parallelise** intent classification across all 7 calls simultaneously instead of sequentially
+- **Add confidence thresholds** — if the Intent Agent is uncertain between cancellation and billing, flag the call for human review rather than auto-assigning
+- **Human-in-the-loop** — for CALL-007 (security incidents), always escalate to a human supervisor regardless of the agent’s confidence level
+
+**Fine-tune for your domain**
+Use your evaluation results to identify systematic errors — intent types the agent consistently confuses or customer segments it handles poorly. Use those cases to refine system prompts, add targeted few-shot examples, or fine-tune the underlying model on NovaTel call transcripts.
