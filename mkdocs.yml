@@ -22,6 +22,8 @@ theme:
     - content.code.copy
     - search.suggest
     - search.highlight
+  logo: assets/images/favicon.svg
+  favicon: assets/images/favicon.svg
   icon:
     repo: fontawesome/brands/github
 

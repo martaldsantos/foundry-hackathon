@@ -176,9 +176,9 @@ body,
   background: rgba(13, 27, 53, 0.3);
 }
 
-/* Hide default Material header logo icon */
+/* Header logo — Microsoft icon color */
 .md-header__button.md-logo {
-  display: none;
+  color: #ffffff;
 }
 
 /* Navigation tabs pills */
