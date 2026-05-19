@@ -30,28 +30,28 @@
   --md-default-fg-color:        var(--hk-navy);
   --md-default-fg-color--light: var(--hk-navy-mid);
   --md-typeset-color:           var(--hk-navy);
+  --md-default-bg-color:        #ffffff;
 }
 
-/* Page background — full cover gradient */
+/* Page background — clean white */
 body {
-  background: linear-gradient(135deg, var(--hk-purple) 0%, var(--hk-mid) 55%, var(--hk-sky) 100%);
-  background-attachment: fixed;
+  background: #ffffff;
   min-height: 100vh;
 }
 
-/* Header — same gradient, slightly deeper */
+/* Header — gradient */
 .md-header {
   background: linear-gradient(90deg, #7C74BE 0%, #5898E0 50%, #44AEEE 100%);
-  box-shadow: var(--hk-shadow);
+  box-shadow: 0 2px 8px rgba(13, 27, 53, 0.12);
 }
 
 .md-header[data-md-state="shadow"] {
-  box-shadow: var(--hk-shadow);
+  box-shadow: 0 2px 12px rgba(13, 27, 53, 0.20);
 }
 
-/* Tabs */
+/* Tabs — matching gradient, slightly deeper */
 .md-tabs {
-  background: linear-gradient(90deg, rgba(110, 100, 188, 0.92), rgba(68, 148, 224, 0.92));
+  background: linear-gradient(90deg, #6B64B0 0%, #4A90D8 100%);
 }
 
 .md-tabs__link {
@@ -71,24 +71,20 @@ body,
   color: var(--hk-navy);
 }
 
-/* Content area — transparent, gradient shows through */
+/* Content area — white, no decoration */
 .md-main__inner {
   margin-top: 0;
 }
 
 .md-content {
-  background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border-radius: 12px;
-  padding: 0.5rem 1rem;
-  margin-top: 1rem;
+  background: transparent;
 }
 
-/* Sidebar — force transparent so gradient shows through */
+/* Sidebar — force transparent so page color shows through */
 .md-sidebar,
 .md-sidebar__scrollwrap,
-.md-sidebar__inner {
+.md-sidebar__inner,
+.md-nav__title {
   background: transparent !important;
 }
 
@@ -154,9 +150,21 @@ body,
 }
 
 /* Search bar */
+.md-search__form {
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: 0 1px 6px rgba(13, 27, 53, 0.20);
+}
+
 .md-search__input {
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.9);
+  background: transparent;
+  color: var(--hk-navy);
+}
+
+.md-search__input::placeholder {
+  color: var(--hk-navy-mid);
+  opacity: 0.7;
 }
 
 /* Footer */
