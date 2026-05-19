@@ -78,6 +78,8 @@ cd factory/challenge-1-build
 python agents.py
 ```
 
+As the script runs, watch the terminal closely — you'll see each agent being created, then each machine from `sensor_data.json` being sent through the **Anomaly Detection Agent** first, and its output handed off to the **Fault Diagnosis Agent**. You'll see the raw agent responses printed for every machine, giving you a live view of how the two agents collaborate. Once it completes, head to the [Microsoft Foundry portal](https://ai.azure.com/nextgen), open your project, and navigate to **Agents** in the left sidebar — hit **Refresh** if the agents don't appear immediately, as it can take a few seconds for newly created agents to show up in the portal.
+
 ## Success Criteria
 
 - [ ] Anomaly Detection Agent correctly identifies the 2 warning + 1 critical machine
