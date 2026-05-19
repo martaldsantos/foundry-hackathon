@@ -17,6 +17,24 @@ Monitoring tells you **what's happening** (latency, errors, token usage). Evalua
 
 You have a dataset of 10 test cases — each with a call scenario and the expected correct classification (intent, priority, sentiment, recommended action). You'll run your agents against these test cases and measure how well they perform using LLM-as-judge scoring.
 
+## Why Evaluate?
+
+Monitoring tells you your agents are *running* — evaluation tells you they're doing the *right thing*. These are fundamentally different questions.
+
+Monitoring captures **operational signals**: latency, token count, error rates, uptime. These tell you *how* the system behaves mechanically. Evaluation captures **quality signals**: are the agent's outputs correct, relevant, coherent, and consistent with expected outcomes? These tell you *whether* the system is actually doing its job.
+
+Without systematic evaluation, you're relying on spot-checks — reading a handful of responses and judging them subjectively. This doesn't scale, isn't repeatable, and can't catch regressions when you update a prompt or switch models. Evaluation gives you a measurable baseline: a score you can track over time and compare across versions.
+
+Evaluation also surfaces issues that monitoring is blind to. An agent that always responds quickly and without errors but consistently misclassifies intent — or gives scripted resolutions that don't match the customer's actual situation — looks perfectly healthy to monitoring. Evaluation catches it immediately.
+
+For production AI, evaluations should run:
+
+- **Before deployment** — establish a quality baseline and gate releases on minimum scores
+- **After any change** — to system prompts, models, tools, or retrieval data
+- **On a schedule** — to detect drift as the underlying model updates or call patterns shift
+
+For the NovaTel call center specifically: an agent that classifies CALL-007 (suspected account hack) as a billing dispute is dangerous — it's a security incident that needs immediate escalation. Monitoring sees a successful, low-latency response. Only evaluation — comparing the output against the expected classification — catches the mistake.
+
 ## The Evaluation Dataset
 
 The dataset lives at [challenge-4-deploy/evaluation_dataset.json](../challenge-4-deploy/evaluation_dataset.json) — it contains:

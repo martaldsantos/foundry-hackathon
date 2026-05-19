@@ -17,6 +17,24 @@ Monitoring tells you **what's happening** (latency, errors, token usage). Evalua
 
 You have a dataset of 10 test cases — each with claim metrics and the expected correct output (classification + recommended action). You'll run your agents against these test cases and measure how well they perform using LLM-as-judge scoring.
 
+## Why Evaluate?
+
+Monitoring tells you your agents are *running* — evaluation tells you they're doing the *right thing*. These are fundamentally different questions.
+
+Monitoring captures **operational signals**: latency, token count, error rates, uptime. These tell you *how* the system behaves mechanically. Evaluation captures **quality signals**: are the agent's outputs correct, relevant, coherent, and consistent with expected outcomes? These tell you *whether* the system is actually doing its job.
+
+Without systematic evaluation, you're relying on spot-checks — reading a handful of responses and judging them subjectively. This doesn't scale, isn't repeatable, and can't catch regressions when you update a prompt or switch models. Evaluation gives you a measurable baseline: a score you can track over time and compare across versions.
+
+Evaluation also surfaces issues that monitoring is blind to. An agent that always responds quickly and without errors but consistently approves high-risk claims — or flags legitimate claims for unnecessary investigation — looks perfectly healthy to monitoring. Evaluation catches it immediately.
+
+For production AI, evaluations should run:
+
+- **Before deployment** — establish a quality baseline and gate releases on minimum scores
+- **After any change** — to system prompts, models, tools, or policy documents in the knowledge base
+- **On a schedule** — to detect drift as fraud patterns evolve or new claim types emerge
+
+For ClaimSight specifically: an agent that approves CLM-001 (fraud risk score 0.87, document completeness 45%) because it generated a coherent-sounding rationale is a direct financial risk. Monitoring sees a successful response. Only evaluation — comparing the output against the expected "investigate" decision — catches the mistake.
+
 ## The Evaluation Dataset
 
 The dataset lives at [challenge-4-deploy/evaluation_dataset.json](../challenge-4-deploy/evaluation_dataset.json) — it contains:

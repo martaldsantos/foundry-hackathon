@@ -21,6 +21,20 @@ Your agents work — but how do you know they're working **well**? What if an ag
 - Latency breakdown (network, model inference, tool execution)
 - Error tracking and alerting
 
+## Why Monitor?
+
+AI agents behave differently from traditional software. A conventional API either returns the right data or throws an error — you can test it deterministically. An agent's output is probabilistic: the same input can produce subtly different responses on each run, tool calls can succeed but return unexpected data, and failures can be silent (the agent responds confidently but incorrectly). Without observability, these issues are invisible until a user reports them.
+
+Monitoring serves three critical functions for AI agents:
+
+- **Reliability** — Detect when agents stop working (tool call failures, timeouts, empty responses) before users do
+- **Performance** — Track latency and token usage over time, catch regressions when you update a system prompt, and right-size your deployments for cost efficiency
+- **Debugging** — When something goes wrong, distributed traces give you a complete record of what the model reasoned, what tools were called, what they returned, and exactly where the chain broke
+
+For production AI systems, monitoring is the foundation that makes improvement possible. You can't fix what you can't see.
+
+For ClaimSight specifically: a tool call timeout on `assess_claim` might cause the triage agent to fall back to a generic response, silently approving a claim it should have flagged for fraud review. To monitoring, that looks like a successful response. Without traces, you'd have no way to link the bad decision to the failed tool call — or even know it happened.
+
 ## Portal or SDK?
 
 Microsoft Foundrygives you two ways to monitor agents. The **Foundry portal** ([ai.azure.com/nextgen](https://ai.azure.com/nextgen)) has a built-in **Tracing** view where you can browse agent interactions, inspect individual spans, and see token usage and latency — no code required. **Application Insights** (via the Azure portal) gives you deeper analytics: Kusto queries, custom dashboards, and alerting rules.
