@@ -1,4 +1,6 @@
-# 🤖 Hands-On Hackathon – Build and Scale AI Agents with Azure
+<img width="4400" height="687" alt="зображення (1)" src="https://github.com/user-attachments/assets/132d5b26-c9d0-404f-b137-4ab3a5d12289" />
+
+# Build and Scale AI Agents with Azure Hackathon
 
 A hands-on step-by-step lab that teaches you to **build, monitor, evaluate, and orchestrate AI agents** using the Microsoft Foundry SDK. Complete in ~2 hours.
 
