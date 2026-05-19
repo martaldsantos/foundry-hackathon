@@ -1,6 +1,10 @@
-# Foundry Lab — Build AI Agents with Azure AI Foundry
+---
+template: home.html
+---
 
-A hands-on lab where you build, monitor, evaluate, and orchestrate AI agents using the **Microsoft FoundrySDK**.
+## Foundry Lab — Build AI Agents with Azure AI Foundry
+
+A hands-on lab where you build, monitor, evaluate, and orchestrate AI agents using the **Microsoft Foundry SDK**.
 
 ## Choose Your Scenario
 

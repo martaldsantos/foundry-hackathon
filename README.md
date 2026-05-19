@@ -1,10 +1,10 @@
-<img width="4400" height="687" alt="зображення (1)" src="https://github.com/user-attachments/assets/132d5b26-c9d0-404f-b137-4ab3a5d12289" />
+<img width="4400" height="687" alt="banner" src="https://github.com/user-attachments/assets/132d5b26-c9d0-404f-b137-4ab3a5d12289" />
 
 # Build and Scale AI Agents with Azure Hackathon
 
 A hands-on step-by-step lab that teaches you to **build, monitor, evaluate, and orchestrate AI agents** using the Microsoft Foundry SDK. Complete in ~2 hours.
 
-> **Prefer a web experience?** All challenge instructions are also available at [martaldsantos.github.io/foundry-hackathon](https://martaldsantos.github.io/foundry-hackathon/).
+All challenge instructions are also available at [martaldsantos.github.io/foundry-hackathon](https://martaldsantos.github.io/foundry-hackathon/).
 
 ## What You'll Learn
 
@@ -17,17 +17,16 @@ This lab walks you through the full lifecycle of building production-ready AI ag
 
 This is a **code-first hackathon** — you'll write and run Python throughout. However, several challenges also have you interact with the **Microsoft Foundry portal** to deploy models, explore traces, review evaluations, and build workflows visually. Expect to move between your IDE and the portal regularly.
 
-All code uses the **`azure-ai-projects`** and **`azure-ai-evaluation`** Python SDKs with **`azure-identity`** for passwordless authentication.
 
 ## Choose Your Scenario
 
 All paths teach the same Foundry concepts — pick the one that resonates with you the most:
 
-| Scenario | Industry | Description | Start Here |
-|----------|----------|-------------|------------|
-| 🏭 **Factory** | Manufacturing | Detect machine anomalies and diagnose faults at TireForge Industries | [Factory Lab →](./factory/) |
-| 📋 **Claims** | Insurance | Triage incoming claims and recommend actions at ClaimSight Insurance | [Claims Lab →](./claims/) |
-| 📞 **Call Center** | Telecom | Classify call intents and advise resolutions at NovaTel Communications | [Call Center Lab →](./callcenter/) |
+| Scenario | Description | Start Here |
+|----------|-------------|------------|
+| 🏭 **Factory** | Detect machine anomalies and diagnose faults at TireForge Industries | [Factory Lab](./factory/) |
+| 📋 **Claims** | Triage incoming claims and recommend actions at ClaimSight Insurance | [Claims Lab](./claims/) |
+| 📞 **Call Center** | Classify call intents and advise resolutions at NovaTel Communications | [Call Center Lab](./callcenter/) |
 
 All scenarios follow the same 5-challenge structure:
 

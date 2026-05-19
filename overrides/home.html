@@ -1,0 +1,18 @@
+{% extends "main.html" %}
+
+{% block content %}
+<div class="hk-hero" role="banner">
+  <div class="hk-hero__text">
+    <p class="hk-hero__eyebrow">Welcome to the</p>
+    <h1 class="hk-hero__title">Hackathon</h1>
+    <p class="hk-hero__date">26 June 2026</p>
+  </div>
+  <div class="hk-hero__canvas" aria-hidden="true">
+    <div class="hk-shape hk-shape--ring"></div>
+    <div class="hk-shape hk-shape--hex"></div>
+    <div class="hk-shape hk-shape--pill"></div>
+    <div class="hk-shape hk-shape--tri"></div>
+  </div>
+</div>
+{{ super() }}
+{% endblock %}
