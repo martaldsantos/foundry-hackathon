@@ -27,15 +27,6 @@ jobs:
       - name: Install MkDocs and dependencies
         run: pip install mkdocs-material
 
-      - name: Prepare docs directory
-        run: |
-          mkdir docs
-          cp README.md docs/index.md
-          cp -r factory docs/
-          cp -r claims docs/
-          cp -r callcenter docs/
-          cp -r overrides docs/
-
       - name: Build site
         run: mkdocs build
 
