@@ -36,11 +36,11 @@ All challenges are Python SDK-based. Challenge 4 also walks you through the Foun
 
 | # | Challenge | Duration | What You'll Do |
 |---|-----------|----------|----------------|
-| 0 | [Setup](../challenge-0-setup/) | 20 min | Provision resources, verify auth |
-| 1 | [Build Agents](./challenge-1-build/) | 35 min | Create claims triage & decision agents |
-| 2 | [Monitor](./challenge-2-monitor/) | 20 min | Enable tracing, explore App Insights |
-| 3 | [Evaluate](./challenge-3-evaluate/) | 25 min | Run evaluations, interpret quality metrics |
-| 4 | [Workflow](./challenge-4-deploy/) | 20 min | Build a multi-agent workflow: triage → decision → claims report |
+| 0 | [Setup](./challenge-0-setup/README.md) | 20 min | Provision resources, verify auth |
+| 1 | [Build Agents](./challenge-1-build/README.md) | 35 min | Create claims triage & decision agents |
+| 2 | [Monitor](./challenge-2-monitor/README.md) | 20 min | Enable tracing, explore App Insights |
+| 3 | [Evaluate](./challenge-3-evaluate/README.md) | 25 min | Run evaluations, interpret quality metrics |
+| 4 | [Workflow](./challenge-4-deploy/README.md) | 20 min | Build a multi-agent workflow: triage → decision → claims report |
 
 ## Architecture
 

@@ -28,5 +28,8 @@ Thumbs.db
 # Azure
 .azure/
 
+# MkDocs build output
+site/
+
 # Workshop solutions
 challenge-*/sdk-track/solutions/
