@@ -3,6 +3,7 @@
 ## Background
 
 **TireForge Industries** operates a tire manufacturing plant with 5 critical machines:
+
 - **MX-001** (Mixer) — Blends raw rubber compounds
 - **EX-002** (Extruder) — Shapes rubber into tire tread profiles
 - **CP-003** (Curing Press) — Vulcanizes tires under heat and pressure
@@ -14,6 +15,7 @@ Each machine emits real-time sensor data: temperature, pressure, vibration, and 
 ## Your Mission
 
 Build an AI agent system that:
+
 1. **Detects anomalies** — Compares sensor readings against thresholds
 2. **Diagnoses faults** — Reasons about root causes from anomaly patterns
 3. **Reports health** — Produces a consolidated factory health report

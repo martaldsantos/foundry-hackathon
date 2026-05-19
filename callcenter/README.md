@@ -15,6 +15,7 @@
 ## Your Mission
 
 Build an AI agent system that:
+
 1. **Classifies intent** — Determines what each customer needs (billing, tech, cancellation, upsell, support, security)
 2. **Advises resolution** — Recommends the best handling strategy based on customer context
 3. **Produces a shift report** — Consolidated triage with prioritized action items

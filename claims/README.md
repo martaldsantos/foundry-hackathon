@@ -7,6 +7,7 @@ You work at **ClaimSight Insurance**, a property and auto insurance company that
 Your mission: **Build AI agents using Microsoft Foundry** that can triage incoming claims and make intelligent processing decisions — flagging suspicious claims for investigation while fast-tracking legitimate ones.
 
 You'll build two agents:
+
 1. **Claims Triage Agent** — Assesses claim metrics against acceptable thresholds and flags anomalies
 2. **Claims Decision Agent** — Takes flagged claims and recommends actions (approve, investigate, request documents, deny)
 
