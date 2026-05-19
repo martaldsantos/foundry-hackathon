@@ -29,7 +29,7 @@ In this challenge we use the **SDK**. The code in [agents.py](./agents.py) creat
 
 ### What is an agent?
 
-An agent in Azure AI Foundry is a persistent, stateful AI assistant backed by a large language model. Unlike a plain API call — where you send a prompt and get a single response — an agent maintains a **conversation thread**, can **invoke tools autonomously**, and **retains context** across multiple turns. You configure it with:
+An agent in Microsoft Foundry is a persistent, stateful AI assistant backed by a large language model. Unlike a plain API call — where you send a prompt and get a single response — an agent maintains a **conversation thread**, can **invoke tools autonomously**, and **retains context** across multiple turns. You configure it with:
 
 - A **name** and **model** (e.g. `gpt-4o`)
 - A **system prompt** — instructions that define its role, personality, and constraints
@@ -49,9 +49,23 @@ From the model's perspective, tools are described by a **JSON schema** (name, de
 |-----------|-------------|----------|
 | **Function** | Calls a local Python function you define | Any custom logic: database lookups, APIs, calculations |
 | **Code Interpreter** | Lets the agent write and execute Python in a sandbox | Data analysis, chart generation, file processing |
-| **File Search** | Semantic search over uploaded documents (vector store) | Policy docs, FAQs, knowledge bases |
+| **File Search** | Semantic search over a Microsoft Foundry knowledge base | Policy docs, manuals, historical records |
 | **Bing Search** | Live web search | Real-time information, news |
 | **Azure AI Search** | Queries an Azure Search index | Grounded retrieval over your own data at scale |
+
+#### Vector databases and Microsoft Foundry knowledge bases
+
+When your agent needs to answer questions grounded in a large body of documents — policy manuals, product specs, historical records — you need a **vector database**. Unlike keyword search, a vector database converts text into numerical embeddings and finds semantically similar passages at query time. This lets the agent ask a natural-language question and retrieve the right content even when the exact words don’t appear in the query.
+
+**Microsoft Foundry** includes a built-in knowledge base backed by a vector store. You upload documents (PDFs, Word files, plain text) and the service automatically chunks, embeds, and indexes them. When you attach this knowledge base to an agent as a **File Search** tool, the agent queries it at inference time — pulling relevant passages into its context before generating a response, so its answers are grounded in your actual documents rather than model training data alone.
+
+For TireForge Industries, useful knowledge bases would include:
+
+- **Machine maintenance manuals** — repair procedures, lubrication schedules, torque specs, and replacement part numbers for each machine
+- **Historical incident reports** — past failures, their root causes, and the corrective actions that resolved them
+- **Supplier specification sheets** — acceptable operating tolerances, warranty conditions, and recommended sensor thresholds per machine model
+
+With this in place, the **Fault Diagnosis Agent** could query “what are the known failure modes of the CP-003 curing press when vibration exceeds 9.0 mm/s?” and retrieve relevant maintenance history — grounding its recommendation in documented precedent rather than general LLM knowledge.
 
 In this challenge the agents use **function tools**. The **Anomaly Detection Agent** uses `check_thresholds` to look up the acceptable operating ranges for each machine and compare them against live sensor readings. Without this tool, the agent would have to reason from memory alone — with it, every threshold check is grounded in actual machine spec data.
 

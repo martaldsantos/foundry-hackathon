@@ -29,7 +29,7 @@ In this challenge we use the **SDK**. The code in [agents.py](./agents.py) creat
 
 ### What is an agent?
 
-An agent in Azure AI Foundry is a persistent, stateful AI assistant backed by a large language model. Unlike a plain API call — where you send a prompt and get a single response — an agent maintains a **conversation thread**, can **invoke tools autonomously**, and **retains context** across multiple turns. You configure it with:
+An agent in Microsoft Foundry is a persistent, stateful AI assistant backed by a large language model. Unlike a plain API call — where you send a prompt and get a single response — an agent maintains a **conversation thread**, can **invoke tools autonomously**, and **retains context** across multiple turns. You configure it with:
 
 - A **name** and **model** (e.g. `gpt-4o`)
 - A **system prompt** — instructions that define its role, personality, and constraints
@@ -49,9 +49,23 @@ From the model's perspective, tools are described by a **JSON schema** (name, de
 |-----------|-------------|----------|
 | **Function** | Calls a local Python function you define | Any custom logic: database lookups, APIs, calculations |
 | **Code Interpreter** | Lets the agent write and execute Python in a sandbox | Data analysis, chart generation, file processing |
-| **File Search** | Semantic search over uploaded documents (vector store) | Policy docs, FAQs, knowledge bases |
+| **File Search** | Semantic search over a Microsoft Foundry knowledge base | Policy docs, manuals, historical records |
 | **Bing Search** | Live web search | Real-time information, news |
 | **Azure AI Search** | Queries an Azure Search index | Grounded retrieval over your own data at scale |
+
+#### Vector databases and Microsoft Foundry knowledge bases
+
+When your agent needs to answer questions grounded in a large body of documents — policy manuals, product specs, historical records — you need a **vector database**. Unlike keyword search, a vector database converts text into numerical embeddings and finds semantically similar passages at query time. This lets the agent ask a natural-language question and retrieve the right content even when the exact words don’t appear in the query.
+
+**Microsoft Foundry** includes a built-in knowledge base backed by a vector store. You upload documents (PDFs, Word files, plain text) and the service automatically chunks, embeds, and indexes them. When you attach this knowledge base to an agent as a **File Search** tool, the agent queries it at inference time — pulling relevant passages into its context before generating a response, so its answers are grounded in your actual documents rather than model training data alone.
+
+For the NovaTel call center, useful knowledge bases would include:
+
+- **Customer service policy manual** — refund thresholds, escalation rules, retention offer eligibility by plan tier
+- **Product & plan documentation** — features by tier, billing cycles, device return windows, roaming policies
+- **Resolution scripts** — approved language for billing disputes, cancellation saves, and upsell conversations
+
+With this in place, the **Resolution Advisor Agent** could query “what retention offers apply to a Premium customer of 3+ years wanting to cancel?” and retrieve the exact offer details from the playbook — rather than hallucinating plausible-sounding but potentially incorrect policies.
 
 In this challenge the agents use **function tools**. The **Intent Classification Agent** uses `lookup_customer` to pull account history and customer tier before deciding intent. Without this tool, the agent would have to guess from the call summary alone — with it, every classification is grounded in real account data.
 
