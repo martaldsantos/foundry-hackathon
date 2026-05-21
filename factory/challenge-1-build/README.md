@@ -1,5 +1,7 @@
 # Challenge 1: Build Agents
 
+Time: ~30 minutes
+
 ## Objectives
 
 By the end of this challenge, you will have:
@@ -31,7 +33,7 @@ In this challenge we use the **SDK**. The code in [agents.py](./agents.py) creat
 
 An agent in Microsoft Foundry is a persistent, stateful AI assistant backed by a large language model. Unlike a plain API call — where you send a prompt and get a single response — an agent maintains a **conversation thread**, can **invoke tools autonomously**, and **retains context** across multiple turns. You configure it with:
 
-- A **name** and **model** (e.g. `gpt-4o`)
+- A **name** and **model** (e.g. `gpt-5.4`)
 - A **system prompt** — instructions that define its role, personality, and constraints
 - One or more **tools** it can call when it needs information or actions beyond its training data
 

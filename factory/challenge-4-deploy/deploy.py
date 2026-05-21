@@ -22,7 +22,7 @@ env_path = _find_repo_root() / ".env"
 load_dotenv(env_path)
 
 PROJECT_CONNECTION_STRING = os.getenv("PROJECT_CONNECTION_STRING")
-MODEL_DEPLOYMENT_NAME = os.getenv("MODEL_DEPLOYMENT_NAME", "gpt-5.1")
+MODEL_DEPLOYMENT_NAME = os.getenv("MODEL_DEPLOYMENT_NAME", "gpt-5.4")
 SENSOR_DATA_PATH = Path(__file__).resolve().parent.parent / "challenge-1-build" / "sensor_data.json"
 
 MACHINES = ["MX-001", "EX-002", "CP-003", "CU-004", "IS-005"]

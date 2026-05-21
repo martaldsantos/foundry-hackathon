@@ -1,5 +1,7 @@
 # Challenge 2: Monitor with Application Insights
 
+Time: ~20 minutes
+
 ## Objectives
 
 By the end of this challenge, you will have:

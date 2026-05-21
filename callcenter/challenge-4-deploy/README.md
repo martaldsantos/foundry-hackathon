@@ -1,5 +1,7 @@
 # Challenge 4: Production Workflow
 
+Time: ~20 minutes
+
 Build a multi-agent orchestration workflow for NovaTel Communications and take it to production.
 
 ## Scenario

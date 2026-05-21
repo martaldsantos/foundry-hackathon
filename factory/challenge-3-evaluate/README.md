@@ -1,5 +1,7 @@
 # Challenge 3: Evaluate
 
+Time: ~30 minutes
+
 ## Objectives
 
 By the end of this challenge, you will have:

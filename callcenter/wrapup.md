@@ -8,7 +8,7 @@ Congratulations — you've built, instrumented, evaluated, and deployed a produc
 
 | # | Challenge | What You Built |
 |---|-----------|----------------|
-| 0 | **Setup** | Provisioned an AI Foundry hub, project, GPT model deployment, Log Analytics workspace, and Application Insights instance via a single `deploy.sh` script |
+| 0 | **Setup** | Provisioned a Microsoft Foundry Resource, project, GPT model deployment, Log Analytics workspace, and Application Insights instance via a single `deploy.sh` script |
 | 1 | **Build Agents** | Created an **Intent Classification Agent** (classifies billing, tech, cancellation, upsell, security intents with a `lookup_customer` tool) and a **Resolution Advisor Agent** (recommends retention offers and actions per customer tier) |
 | 2 | **Monitor** | Enabled OpenTelemetry GenAI tracing — every model call, tool invocation, and token count is captured as a distributed trace in Application Insights |
 | 3 | **Evaluate** | Ran systematic LLM-as-judge evaluations across the full call dataset, producing repeatable coherence and relevance scores you can version-track across prompt changes |
@@ -44,7 +44,7 @@ Want to take the NovaTel system further? Here are some directions:
 ### What gets deleted
 
 - The resource group `foundry-hackathon-rg-<suffix>` and everything inside it:
-  - AI Foundry hub + project
+  - Microsoft Foundry Resource + project
   - GPT model deployment
   - Log Analytics workspace
   - Application Insights instance

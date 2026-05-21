@@ -75,5 +75,5 @@ This will provision all resources **and** automatically write your `.env` file t
 ## Success Criteria
 
 - [ ] You can see your AI Foundry project in the Azure Portal
-- [ ] A model deployment for gpt-5.1 or gpt-5.4 shows "Succeeded" status
+- [ ] A model deployment for gpt-5.4 shows "Succeeded" status
 - [ ] You can send a test message in the Foundry Playground (Portal)
