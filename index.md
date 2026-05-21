@@ -1,3 +1,5 @@
+![Banner](./assets/images/banner.png)
+
 # Lab — Build AI Agents with Microsoft Foundry
 
 A hands-on lab where you build, monitor, evaluate, and orchestrate AI agents using the **Azure AI Foundry SDK**. Pick a scenario, work through five challenges, and end up with a working multi-agent system you can actually trace, evaluate, and deploy.

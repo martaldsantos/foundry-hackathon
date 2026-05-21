@@ -2,7 +2,13 @@
 
 # Build and Scale AI Agents with Azure Hackathon
 
-A hands-on step-by-step lab that teaches you to **build, monitor, evaluate, and orchestrate AI agents** using the Microsoft Foundry SDK. Complete in ~2 hours.
+Welcome to the hands-on lab experience of the Microsoft Cloud & AI Frontier Week Hackathon — where ideas turn into real solutions.
+ 
+Throughout Frontier Week, you’ve explored how AI is transforming organizations. This is where you put that into practice.
+ 
+In this lab, you’ll build, monitor, evaluate, and orchestrate AI agents using the Microsoft Foundry SDK. You’ll follow a guided, scenario-based experience designed to help you move from concept to a working, enterprise-ready multi-agent system.
+ 
+By the end, you won’t just understand how agents work — you’ll have built one you can trace, evaluate, and deploy.
 
 All challenge instructions are also available at [martaldsantos.github.io/foundry-hackathon](https://martaldsantos.github.io/foundry-hackathon/).
 
