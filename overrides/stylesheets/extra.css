@@ -101,6 +101,12 @@ body,
 .md-typeset h1 {
   color: var(--hk-navy);
   font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+/* Tighten the gap between the page title and the Time/duration line */
+.md-typeset h1 + p {
+  margin-top: 0.2rem;
 }
 
 .md-typeset h2 {

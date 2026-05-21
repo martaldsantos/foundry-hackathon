@@ -1,7 +1,6 @@
 ![Banner](./assets/images/banner.png)
 
 # Lab — Build AI Agents with Microsoft Foundry
-
 Welcome to the hands-on lab for the **Microsoft Cloud & AI Frontier Week Hackathon** — where ideas turn into real solutions.
 
 Throughout Frontier Week, you've explored how AI is transforming organizations. This is where you put that into practice.
