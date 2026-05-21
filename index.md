@@ -1,10 +1,14 @@
 ![Banner](./assets/images/banner.png)
 
 # Lab — Build AI Agents with Microsoft Foundry
-Welcome to the hands-on lab experience of the Microsoft Cloud & AI Frontier Week Hackathon — where ideas turn into real solutions.
-Throughout Frontier Week, you’ve explored how AI is transforming organizations. This is where you put that into practice.
-In this lab, you’ll build, monitor, evaluate, and orchestrate AI agents using the Microsoft Foundry SDK. You’ll follow a guided, scenario-based experience designed to help you move from concept to a working, enterprise-ready multi-agent system.
-By the end, you won’t just understand how agents work — you’ll have built one you can trace, evaluate, and deploy.
+
+Welcome to the hands-on lab for the **Microsoft Cloud & AI Frontier Week Hackathon** — where ideas turn into real solutions.
+
+Throughout Frontier Week, you've explored how AI is transforming organizations. This is where you put that into practice.
+
+In this lab, you'll **build, monitor, evaluate, and orchestrate AI agents** using the Microsoft Foundry SDK — following a guided, scenario-based experience designed to take you from concept to a working, enterprise-ready multi-agent system.
+
+By the end, you won't just understand how agents work — you'll have built one you can **trace, evaluate, and deploy**.
 
 ## Choose Your Scenario
 

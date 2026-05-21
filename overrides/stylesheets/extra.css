@@ -1,10 +1,10 @@
 /* Foundry Hackathon — Cover-matched theme (lavender → sky blue) */
 
 :root {
-  /* Hackathon cover palette */
-  --hk-purple:      #9890CE;                        /* lavender-purple, gradient start */
-  --hk-mid:         #6BA5E8;                        /* periwinkle, gradient mid */
-  --hk-sky:         #5AB8F5;                        /* bright sky blue, gradient end */
+  /* Hackathon cover palette — matched to banner */
+  --hk-purple:      #B5D5EE;                        /* light periwinkle-blue, gradient start */
+  --hk-mid:         #68B8E8;                        /* sky blue, gradient mid */
+  --hk-sky:         #2CC8F0;                        /* bright cyan, gradient end */
   --hk-navy:        #0D1B35;                        /* dark navy — primary text */
   --hk-navy-mid:    #1E3A68;                        /* medium navy — secondary text */
   --hk-cobalt:      #1E5CC8;                        /* shape fill / link accent */
@@ -41,7 +41,7 @@ body {
 
 /* Header — gradient matched to banner */
 .md-header {
-  background: linear-gradient(90deg, #A8C8F0 0%, #6ABDE8 50%, #40C8F0 100%);
+  background: linear-gradient(90deg, #B5D5EE 0%, #68B8E8 50%, #2CC8F0 100%) !important;
   box-shadow: 0 2px 8px rgba(13, 27, 53, 0.12);
 }
 
@@ -51,7 +51,7 @@ body {
 
 /* Tabs — matching gradient, slightly deeper */
 .md-tabs {
-  background: linear-gradient(90deg, #7AAEE0 0%, #40B8EC 100%);
+  background: linear-gradient(90deg, #8EC4E8 0%, #25BCEC 100%) !important;
 }
 
 .md-tabs__link {
