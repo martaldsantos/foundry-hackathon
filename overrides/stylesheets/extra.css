@@ -39,9 +39,9 @@ body {
   min-height: 100vh;
 }
 
-/* Header — gradient */
+/* Header — gradient matched to banner */
 .md-header {
-  background: linear-gradient(90deg, #7C74BE 0%, #5898E0 50%, #44AEEE 100%);
+  background: linear-gradient(90deg, #A8C8F0 0%, #6ABDE8 50%, #40C8F0 100%);
   box-shadow: 0 2px 8px rgba(13, 27, 53, 0.12);
 }
 
@@ -51,7 +51,7 @@ body {
 
 /* Tabs — matching gradient, slightly deeper */
 .md-tabs {
-  background: linear-gradient(90deg, #6B64B0 0%, #4A90D8 100%);
+  background: linear-gradient(90deg, #7AAEE0 0%, #40B8EC 100%);
 }
 
 .md-tabs__link {
