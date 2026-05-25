@@ -10,13 +10,15 @@ Builds both agents with system prompts, tools, and conversation handling.
 
 import json
 import os
+import subprocess
 import sys
+import time
 from pathlib import Path
 
 from dotenv import load_dotenv
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import FunctionTool, PromptAgentDefinition
-from azure.identity import DefaultAzureCredential
+from azure.identity import AzureCliCredential, DefaultAzureCredential
 from openai.types.responses.response_input_param import FunctionCallOutput
 
 
@@ -36,7 +38,114 @@ load_dotenv(env_path)
 
 PROJECT_CONNECTION_STRING = os.getenv("PROJECT_CONNECTION_STRING")
 MODEL_DEPLOYMENT_NAME = os.getenv("MODEL_DEPLOYMENT_NAME", "gpt-5.4")
+FOUNDRY_RESOURCE_NAME = os.getenv("FOUNDRY_RESOURCE_NAME")
+RESOURCE_GROUP = os.getenv("RESOURCE_GROUP")
 SENSOR_DATA_PATH = Path(__file__).resolve().parent / "sensor_data.json"
+
+
+# =============================================================================
+# RBAC Preflight — ensure Azure AI Developer role is assigned
+# =============================================================================
+
+def _az(*args: str) -> str:
+    """Run an az CLI command and return stripped stdout."""
+    result = subprocess.run(
+        ["az", *args],
+        capture_output=True, text=True, shell=True,
+    )
+    if result.returncode != 0:
+        return ""
+    return result.stdout.strip()
+
+
+def get_credential():
+    """Return AzureCliCredential to stay consistent with the az CLI identity.
+
+    DefaultAzureCredential can silently pick up a different principal
+    (env vars, managed identity) than the one with RBAC roles assigned via az CLI.
+    Pinning to AzureCliCredential avoids that mismatch.
+    """
+    return AzureCliCredential()
+
+
+def ensure_rbac():
+    """Check for required RBAC roles on the Foundry resource; assign if missing."""
+    if not FOUNDRY_RESOURCE_NAME or not RESOURCE_GROUP:
+        print("⚠️  FOUNDRY_RESOURCE_NAME / RESOURCE_GROUP not in .env — skipping RBAC check.")
+        return
+
+    # Use GUID — role names are mid-rename ("Azure AI User" → "Foundry User")
+    # and may not resolve by name. GUID is stable across the rollout.
+    # https://learn.microsoft.com/en-us/azure/foundry/tutorials/quickstart-create-foundry-resources
+    FOUNDRY_USER_ROLE_ID = "53ca6127-db72-4b80-b1b0-d745d6d5456d"
+    REQUIRED_ROLES = [
+        ("Foundry User", FOUNDRY_USER_ROLE_ID),
+    ]
+
+    print("🔐 Checking RBAC permissions...")
+
+    # 1. Get current user's object ID
+    user_oid = _az("ad", "signed-in-user", "show", "--query", "id", "-o", "tsv")
+    if not user_oid:
+        print("⚠️  Could not resolve signed-in user — skipping RBAC check.")
+        return
+    print(f"   Principal (az CLI): {user_oid}")
+
+    # 2. Get Foundry resource ID
+    resource_id = _az(
+        "cognitiveservices", "account", "show",
+        "--name", FOUNDRY_RESOURCE_NAME,
+        "--resource-group", RESOURCE_GROUP,
+        "--query", "id", "-o", "tsv",
+    )
+    if not resource_id:
+        print("⚠️  Could not resolve Foundry resource — skipping RBAC check.")
+        return
+
+    # 3. Check & assign each role
+    roles_assigned = []
+    for role_name, role_id in REQUIRED_ROLES:
+        existing = _az(
+            "role", "assignment", "list",
+            "--assignee", user_oid,
+            "--role", role_id,
+            "--scope", resource_id,
+            "--query", "[0].id", "-o", "tsv",
+        )
+
+        if existing:
+            print(f"   ✅ {role_name} — already assigned")
+            continue
+
+        print(f"   ⏳ Assigning {role_name} ({role_id})...")
+        assign_result = subprocess.run(
+            [
+                "az", "role", "assignment", "create",
+                "--assignee", user_oid,
+                "--role", role_id,
+                "--scope", resource_id,
+                "--output", "none",
+            ],
+            capture_output=True, text=True, shell=True,
+        )
+
+        if assign_result.returncode != 0:
+            print(f"   ❌ Failed to assign {role_name}:\n{assign_result.stderr}")
+            print(f"   Run manually: az role assignment create --assignee {user_oid} --role '{role_id}' --scope {resource_id}")
+            sys.exit(1)
+
+        print(f"   ✅ {role_name} — assigned")
+        roles_assigned.append(role_name)
+
+    # 4. Wait for propagation only if new roles were assigned
+    if roles_assigned:
+        print(f"\n⏳ {len(roles_assigned)} role(s) assigned. Waiting 60s for RBAC propagation...")
+        for remaining in range(60, 0, -10):
+            print(f"   {remaining}s remaining...")
+            time.sleep(10)
+        print("   Done — proceeding.\n")
+    else:
+        print("   All roles in place.\n")
 
 
 # =============================================================================
@@ -137,7 +246,7 @@ class AnomalyDetectionAgent:
         """Create the anomaly detection agent in Foundry."""
         self.client = AIProjectClient(
             endpoint=PROJECT_CONNECTION_STRING,
-            credential=DefaultAzureCredential(),
+            credential=get_credential(),
         )
         self.openai = self.client.get_openai_client()
 
@@ -230,7 +339,7 @@ class FaultDiagnosisAgent:
         """Create the fault diagnosis agent in Foundry."""
         self.client = AIProjectClient(
             endpoint=PROJECT_CONNECTION_STRING,
-            credential=DefaultAzureCredential(),
+            credential=get_credential(),
         )
         self.openai = self.client.get_openai_client()
 
@@ -292,6 +401,9 @@ def main():
     if not PROJECT_CONNECTION_STRING:
         print("❌ PROJECT_CONNECTION_STRING not set. Run challenge 0 first!")
         sys.exit(1)
+
+    # --- RBAC preflight -------------------------------------------------------
+    ensure_rbac()
 
     print("=== Anomaly Detection Agent ===")
     print("Creating agent...")
